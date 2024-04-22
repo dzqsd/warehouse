@@ -1,0 +1,47 @@
+<nz-card nzTitle="常用功能">
+  <div
+    nz-card-grid
+    [ngStyle]="gridStyle"
+    (click)="router.navigate(['review', 'filing'])"
+  >
+    备案审批
+  </div>
+  <div
+    nz-card-grid
+    [ngStyle]="gridStyle"
+    (click)="router.navigate(['review', 'company'])"
+  >
+    企业认证审批
+  </div>
+  <div
+    nz-card-grid
+    [ngStyle]="gridStyle"
+    (click)="router.navigate(['query', 'filing'])"
+  >
+    备案查询
+  </div>
+  <div
+    nz-card-grid
+    [ngStyle]="gridStyle"
+    (click)="router.navigate(['query', 'enterprise'])"
+  >
+    企业查询
+  </div>
+</nz-card>
+
+<nz-card nzTitle="指南服务"> 暂无文件 </nz-card>
+
+<nz-card nzTitle="服务公告"> 暂无文件 </nz-card>
+
+<ng-template let-uuid="data">
+  您有备案已超过5天未审核！
+
+  <button
+    nz-button
+    nzSize="small"
+    nzType="primary"
+    (click)="router.navigate(['review', 'filing', uuid])"
+  >
+    前往审核
+  </button>
+</ng-template>

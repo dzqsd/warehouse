@@ -1,0 +1,12 @@
+@if (filingInfo$ | async; as filingInfo) {
+  <nz-page-header
+    class="site-page-header"
+    [nzGhost]="false"
+    nzTitle="备案详细信息"
+    [nzSubtitle]="filingInfo.name"
+  ></nz-page-header>
+
+  <app-filing-description
+    [filingUuid]="filingInfo.uuid"
+  ></app-filing-description>
+}

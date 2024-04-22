@@ -1,0 +1,22 @@
+<div class="container">
+  <div class="nz-layout-wrapper">
+    <nz-layout>
+      <div class="content">
+        <nz-page-header
+          class="site-page-header"
+          [nzGhost]="false"
+          nzTitle="注册新用户"
+        ></nz-page-header>
+
+        @if (formItemInfos$ | async; as formItemInfos) {
+          <lib-custom-form
+            [formItemInfos]="formItemInfos"
+            [formData$]="formData$"
+          ></lib-custom-form>
+        } @else {
+          <nz-skeleton></nz-skeleton>
+        }
+      </div>
+    </nz-layout>
+  </div>
+</div>

@@ -1,0 +1,13 @@
+<nz-space nzSize="middle">
+  <nz-avatar *nzSpaceItem nzIcon="user"></nz-avatar>
+  <a *nzSpaceItem nz-dropdown [nzDropdownMenu]="menu" nzPlacement="bottomRight">
+    {{ userName$ | async }}
+    <span nz-icon nzType="down"></span>
+  </a>
+  <nz-dropdown-menu #menu="nzDropdownMenu">
+    <ul nz-menu nzSelectable>
+      <li nz-menu-item [routerLink]="['user-center']">用户中心</li>
+      <li nz-menu-item nzDanger (click)="logout()">退出登录</li>
+    </ul>
+  </nz-dropdown-menu>
+</nz-space>

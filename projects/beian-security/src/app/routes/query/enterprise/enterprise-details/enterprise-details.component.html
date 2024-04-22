@@ -1,0 +1,14 @@
+@if (enterpriseInfo$ | async; as enterpriseInfo) {
+  <nz-page-header
+    class="site-page-header"
+    [nzGhost]="false"
+    nzTitle="企业详细信息"
+    [nzSubtitle]="enterpriseInfo.name"
+  ></nz-page-header>
+
+  <div class="enterprise-body">
+    <app-enterprise-description
+      [enterpriseUuid]="enterpriseInfo.uuid"
+    ></app-enterprise-description>
+  </div>
+}

@@ -1,0 +1,35 @@
+<nz-descriptions nzTitle="" nzLayout="vertical">
+  <nz-descriptions-item [nzTitle]="description.title">
+    <div class="img-description-list">
+      @for (value of description.value; track $index) {
+        @if (
+          value.name.toLowerCase().endsWith("jpg") ||
+          value.name.toLowerCase().endsWith("jpeg") ||
+          value.name.toLowerCase().endsWith("png")
+        ) {
+          <div class="img-description-item">
+            <lib-http-img [url]="value.src"></lib-http-img>
+          </div>
+        } @else {
+          <br />
+          <nz-card class="file-description-card">
+            <div class="file-description">
+              <span nz-icon nzType="file" nzTheme="outline"></span>
+              <div class="filename">{{ value.name }}</div>
+
+              <span class="download-btn">
+                <button
+                  nz-button
+                  nzShape="circle"
+                  (click)="downloadFile(value.src, value.name)"
+                >
+                  <span nz-icon nzType="download"></span>
+                </button>
+              </span>
+            </div>
+          </nz-card>
+        }
+      }
+    </div>
+  </nz-descriptions-item>
+</nz-descriptions>

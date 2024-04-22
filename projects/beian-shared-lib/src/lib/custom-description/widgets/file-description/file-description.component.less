@@ -1,0 +1,27 @@
+.file-description-card {
+  max-width: max-content;
+  // min-width: max-content;
+
+  .file-description {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+
+    max-width: max-content;
+
+    .filename {
+      flex: 1;
+      margin-left: 1rem;
+      max-width: 500px;
+      min-width: 200px;
+      white-space: normal;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .download-btn {
+      margin-left: auto;
+      padding-left: 1rem;
+    }
+  }
+}

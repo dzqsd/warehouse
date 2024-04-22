@@ -1,0 +1,40 @@
+<nz-card [nzTitle]="title">
+  <form nz-form nzLayout="vertical">
+    @for (customFormItem of customFormItems; track $index) {
+      @switch (customFormItem.metaInfo.formType) {
+        @case ("string") {
+          <lib-string-input
+            [customFormItem]="customFormItem"
+          ></lib-string-input>
+        }
+        @case ("number") {
+          <lib-number-input
+            [customFormItem]="customFormItem"
+          ></lib-number-input>
+        }
+        @case ("img") {
+          <lib-img-input [customFormItem]="customFormItem"></lib-img-input>
+        }
+        @case ("file") {
+          <lib-file-input [customFormItem]="customFormItem"></lib-file-input>
+        }
+        @case ("select") {
+          <lib-select-input
+            [customFormItem]="customFormItem"
+          ></lib-select-input>
+        }
+        @case ("date") {
+          <lib-date-input [customFormItem]="customFormItem"></lib-date-input>
+        }
+      }
+    }
+
+    <nz-form-item>
+      <nz-form-control>
+        <button nz-button nzType="primary" (click)="submit$.next(true)">
+          提交
+        </button>
+      </nz-form-control>
+    </nz-form-item>
+  </form>
+</nz-card>

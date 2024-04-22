@@ -1,0 +1,60 @@
+<div class="container">
+  <div class="login-wrapper">
+    <div class="login">
+      <div class="title">
+        <h1>物资调配规划模拟系统</h1>
+      </div>
+      <form nz-form class="login-form" (ngSubmit)="this.submit$.next(true)">
+        <nz-form-item>
+          <nz-form-control>
+            <nz-input-group nzPrefixIcon="user">
+              <input
+                type="text"
+                nz-input
+                placeholder="用户名"
+                [ngModelOptions]="{ standalone: true }"
+                [ngModel]="username$ | async"
+                (ngModelChange)="username$.next($event)"
+              />
+            </nz-input-group>
+          </nz-form-control>
+        </nz-form-item>
+        <nz-form-item>
+          <nz-form-control>
+            <nz-input-group nzPrefixIcon="lock">
+              <input
+                type="password"
+                nz-input
+                placeholder="密码"
+                [ngModelOptions]="{ standalone: true }"
+                [ngModel]="password$ | async"
+                (ngModelChange)="password$.next($event)"
+              />
+            </nz-input-group>
+          </nz-form-control>
+        </nz-form-item>
+        <div nz-row class="login-form-margin">
+          <div nz-col [nzSpan]="12">
+            <label
+              nz-checkbox
+              [ngModel]="rememberMe$ | async"
+              (ngModelChange)="this.rememberMe$.next($event)"
+              [ngModelOptions]="{ standalone: true }"
+            >
+              <span>记住我</span>
+            </label>
+          </div>
+        </div>
+        <button
+          nz-button
+          class="login-form-button login-form-margin"
+          [nzType]="'primary'"
+        >
+          登录
+        </button>
+
+        <a class="login-form-register" routerLink="/register">注册账号</a>
+      </form>
+    </div>
+  </div>
+</div>

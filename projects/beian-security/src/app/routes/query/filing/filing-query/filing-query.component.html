@@ -1,0 +1,58 @@
+<nz-page-header class="site-page-header" [nzGhost]="false" nzTitle="备案查询">
+  <nz-page-header-extra>
+    <nz-space>
+      <button *nzSpaceItem nz-button (click)="visible$.next(true)">
+        查询条件
+      </button>
+    </nz-space>
+  </nz-page-header-extra>
+</nz-page-header>
+
+<app-filing-query-params
+  [filingQueryParams$]="filingQueryParams$"
+  [visible$]="visible$"
+></app-filing-query-params>
+
+@if (data$ | async; as data) {
+  <nz-table
+    #fixedTable
+    [nzData]="data"
+    [nzFrontPagination]="false"
+    [nzTotal]="(total$ | async)!"
+    [nzLoading]="loading$ | async"
+    [nzPageIndex]="(pageIndex$ | async)!"
+    [nzPageSize]="(pageSize$ | async)!"
+    [nzScroll]="{ x: '750px', y: '1240px' }"
+    (nzPageSizeChange)="this.pageSize$.next($event)"
+    (nzPageIndexChange)="this.pageIndex$.next($event)"
+  >
+    <thead>
+      <tr>
+        <th>备案类型</th>
+        <th>企业名称</th>
+        <th>刀具名称</th>
+        <th>刀具品种</th>
+        <th>刀具型号</th>
+        <th>提交日期</th>
+        <th>审核状态</th>
+        <th nzRight>操作</th>
+      </tr>
+    </thead>
+    <tbody>
+      @for (item of data; track $index) {
+        <tr>
+          <td>{{ item.type }}</td>
+          <td>{{ item.enterpriseName }}</td>
+          <td>{{ item.name }}</td>
+          <td>{{ item.category }}</td>
+          <td>{{ item.model }}</td>
+          <td>{{ item.createTime | date: "yyyy-MM-dd" }}</td>
+          <td>{{ item.status }}</td>
+          <td nzRight>
+            <a nz-button nzType="link" [routerLink]="[item.uuid]">查看详情</a>
+          </td>
+        </tr>
+      }
+    </tbody>
+  </nz-table>
+}

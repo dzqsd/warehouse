@@ -1,0 +1,23 @@
+<nz-form-item>
+  <nz-form-label [nzRequired]="customFormItem.metaInfo.constraint.required">{{
+    customFormItem.metaInfo.title
+  }}</nz-form-label>
+  <nz-form-control
+    [nzHasFeedback]="customFormItem.metaInfo.constraint.required"
+    [nzErrorTip]="undefined"
+  >
+    @if (uploadFiles$ | async; as uploadFiles) {
+      <nz-upload
+        nzListType="picture"
+        [nzFileList]="uploadFiles"
+        (nzFileListChange)="uploadFiles$.next($event)"
+        [nzBeforeUpload]="beforeUpload"
+      >
+        <button nz-button>
+          <span nz-icon nzType="upload"></span>
+          上传文件
+        </button>
+      </nz-upload>
+    }
+  </nz-form-control>
+</nz-form-item>

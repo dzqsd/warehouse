@@ -1,0 +1,20 @@
+<nz-form-item>
+  <nz-form-label [nzRequired]="customFormItem.metaInfo.constraint.required">{{
+    customFormItem.metaInfo.title
+  }}</nz-form-label>
+  <nz-form-control
+    [nzHasFeedback]="customFormItem.metaInfo.constraint.required"
+    [nzErrorTip]="undefined"
+  >
+    <nz-input-number-group
+      [nzAddOnBefore]="constraint.addOnBefore"
+      style="width: 100%"
+    >
+      <nz-input-number
+        [nzStep]="1"
+        [ngModel]="data$ | async"
+        (ngModelChange)="data$.next($event)"
+      ></nz-input-number>
+    </nz-input-number-group>
+  </nz-form-control>
+</nz-form-item>

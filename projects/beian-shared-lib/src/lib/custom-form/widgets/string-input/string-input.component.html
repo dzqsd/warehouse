@@ -1,0 +1,38 @@
+<nz-form-item>
+  <nz-form-label [nzRequired]="customFormItem.metaInfo.constraint.required">{{
+    customFormItem.metaInfo.title
+  }}</nz-form-label>
+  <nz-form-control nzHasFeedback [nzErrorTip]="combineTpl">
+    <nz-input-group [nzSuffix]="suffixTemplate">
+      <input
+        nz-input
+        [ngModel]="data$ | async"
+        (ngModelChange)="data$.next($event)"
+        [required]="constraint.required"
+        [placeholder]="constraint.placeholder"
+        [type]="(visible$ | async) ? 'text' : 'password'"
+        [minlength]="constraint.minlength ?? null"
+        [maxlength]="constraint.maxlength ?? null"
+      />
+    </nz-input-group>
+    <ng-template #suffixTemplate>
+      @if (constraint.password) {
+        <span
+          nz-icon
+          [nzType]="(visible$ | async) ? 'eye-invisible' : 'eye'"
+          (click)="visible$.next(!visible$.value)"
+        ></span>
+      }
+    </ng-template>
+
+    <ng-template #combineTpl let-control>
+      <ng-container *ngIf="control.hasError('maxlength')"
+        >最大长度为{{ constraint.maxlength }}</ng-container
+      >
+      <ng-container *ngIf="control.hasError('minlength')"
+        >最短长度为{{ constraint.minlength }}</ng-container
+      >
+      <ng-container *ngIf="control.hasError('required')">不得为空</ng-container>
+    </ng-template>
+  </nz-form-control>
+</nz-form-item>

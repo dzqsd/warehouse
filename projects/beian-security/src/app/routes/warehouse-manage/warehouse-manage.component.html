@@ -1,0 +1,41 @@
+<p>添加物资</p>
+<nz-select [(ngModel)]="addValue">
+  <nz-option nzValue="jack" nzLabel="Jack"></nz-option>
+  <nz-option nzValue="lucy" nzLabel="Lucy"></nz-option>
+  <nz-option nzValue="tom" nzLabel="Tom"></nz-option>
+  <nz-option nzValue="mike" nzLabel="Mike"></nz-option>
+</nz-select>
+
+<input
+  [(ngModel)]="addQuantity"
+  type="number"
+  nz-input
+  placeholder="数量"
+  nzSize="default"
+/>
+<button nz-button nzType="primary" (click)="addItem(addValue, addQuantity)">
+  添加
+</button>
+
+<p>删除物资</p>
+<nz-select [(ngModel)]="removeValue">
+  <nz-option nzValue="jack" nzLabel="Jack"></nz-option>
+  <nz-option nzValue="lucy" nzLabel="Lucy"></nz-option>
+  <nz-option nzValue="tom" nzLabel="Tom"></nz-option>
+  <nz-option nzValue="mike" nzLabel="Mike"></nz-option>
+</nz-select>
+
+<input
+  [(ngModel)]="removeQuantity"
+  type="number"
+  nz-input
+  placeholder="数量"
+  nzSize="default"
+/>
+<button
+  nz-button
+  nzType="primary"
+  (click)="removeItem(removeValue, removeQuantity)"
+>
+  删除
+</button>

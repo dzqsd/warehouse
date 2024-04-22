@@ -1,0 +1,24 @@
+<nz-card>
+  @for (itemInfo of descriptionItemInfos; track $index) {
+    @switch (itemInfo.descriptionType) {
+      @case ("string") {
+        <lib-string-description
+          [descriptionInfo]="itemInfo"
+        ></lib-string-description>
+      }
+      @case ("img") {
+        <lib-img-description [descriptionInfo]="itemInfo"></lib-img-description>
+      }
+      @case ("file") {
+        <lib-file-description
+          [descriptionInfo]="itemInfo"
+        ></lib-file-description>
+      }
+      @case ("time") {
+        <lib-time-description
+          [descriptionInfo]="itemInfo"
+        ></lib-time-description>
+      }
+    }
+  }
+</nz-card>

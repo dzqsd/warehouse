@@ -1,0 +1,69 @@
+<nz-layout
+  class="app-layout"
+  [ngClass]="(isCollapsed$ | async) ? 'sidebar-open' : ''"
+>
+  <nz-sider
+    class="menu-sidebar"
+    nzCollapsible
+    nzWidth="256px"
+    [nzCollapsed]="isCollapsed$ | async"
+    [nzBreakpoint]="'sm'"
+    [nzCollapsedWidth]="0"
+    [nzTrigger]="null"
+  >
+    <div class="sidebar-logo">
+      <a routerLink="/">
+        <!--        <img src="./assets/logo.svg" alt="logo" />-->
+        <h1>阳江管制刀具生产备案管理信息系统</h1>
+      </a>
+    </div>
+    <ng-container *ngIf="menus$ | async as menus">
+      <app-layout-menus [menus]="menus"></app-layout-menus>
+    </ng-container>
+    <div
+      class="sidebar-trigger"
+      (click)="isCollapsed$.next(!isCollapsed$.value)"
+    >
+      <i
+        class="trigger"
+        nz-icon
+        [nzType]="(isCollapsed$ | async) ? 'menu-unfold' : 'menu-fold'"
+      ></i>
+    </div>
+  </nz-sider>
+  <nz-layout class="right-layout">
+    <nz-header>
+      <div class="app-header">
+        <span
+          class="header-trigger"
+          (click)="isCollapsed$.next(!isCollapsed$.value)"
+        >
+          <i
+            class="trigger"
+            nz-icon
+            [nzType]="(isCollapsed$ | async) ? 'menu-unfold' : 'menu-fold'"
+          ></i>
+        </span>
+        <span class="header-trigger" (click)="themeService.toggleTheme()">
+          <i class="trigger" nz-icon nzType="skin" nzTheme="outline"></i>
+        </span>
+        <span class="header-trigger-right">
+          <app-basic-layout-user-header></app-basic-layout-user-header
+        ></span>
+      </div>
+    </nz-header>
+    <nz-content>
+      <div class="inner-content">
+        <router-outlet></router-outlet>
+      </div>
+    </nz-content>
+    <nz-footer>
+      <a
+        href="https://beian.miit.gov.cn/publish/query/indexFirst.action"
+        target="_blank"
+      >
+        <span style="color: #9d9d9d"> 备案号 </span>
+      </a>
+    </nz-footer>
+  </nz-layout>
+</nz-layout>

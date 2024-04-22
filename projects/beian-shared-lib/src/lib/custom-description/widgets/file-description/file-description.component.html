@@ -1,0 +1,20 @@
+{{ description.title + ":" }}
+@for (value of description.value; track $index) {
+  <br />
+  <nz-card class="file-description-card">
+    <div class="file-description">
+      <span nz-icon nzType="file" nzTheme="outline"></span>
+      <div class="filename">{{ value.name }}</div>
+
+      <span class="download-btn">
+        <button
+          nz-button
+          nzShape="circle"
+          (click)="downloadFile(value.src, value.name)"
+        >
+          <span nz-icon nzType="download"></span>
+        </button>
+      </span>
+    </div>
+  </nz-card>
+}

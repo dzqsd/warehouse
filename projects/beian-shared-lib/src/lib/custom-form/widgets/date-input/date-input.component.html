@@ -1,0 +1,12 @@
+<nz-form-item>
+  <nz-form-label [nzRequired]="customFormItem.metaInfo.constraint.required">{{
+    customFormItem.metaInfo.title
+  }}</nz-form-label>
+  <nz-form-control [nzHasFeedback]="constraint.required" nzErrorTip="不能为空">
+    <nz-date-picker
+      style="width: 100%"
+      [ngModel]="data$ | async"
+      (ngModelChange)="data$.next($event)"
+    ></nz-date-picker>
+  </nz-form-control>
+</nz-form-item>
