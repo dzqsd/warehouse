@@ -1,41 +1,83 @@
-<p>添加物资</p>
-<nz-select [(ngModel)]="addValue">
-  <nz-option nzValue="jack" nzLabel="Jack"></nz-option>
-  <nz-option nzValue="lucy" nzLabel="Lucy"></nz-option>
-  <nz-option nzValue="tom" nzLabel="Tom"></nz-option>
-  <nz-option nzValue="mike" nzLabel="Mike"></nz-option>
-</nz-select>
+<nz-page-header
+  nzTitle="物资管理"
+  nzSubtitle="物资添加、删除"
+  [nzGhost]="false"
+></nz-page-header>
 
-<input
-  [(ngModel)]="addQuantity"
-  type="number"
-  nz-input
-  placeholder="数量"
-  nzSize="default"
-/>
-<button nz-button nzType="primary" (click)="addItem(addValue, addQuantity)">
-  添加
-</button>
+<nz-card>
+  <p>添加物资</p>
+  <div nz-row>
+    <div nz-col nzSpan="6">
+      <nz-select [(ngModel)]="addPlace" style="width: 100%">
+        <nz-option nzValue="jack" nzLabel="Jack"></nz-option>
+        <nz-option nzValue="lucy" nzLabel="Lucy"></nz-option>
+        <nz-option nzValue="tom" nzLabel="Tom"></nz-option>
+        <nz-option nzValue="mike" nzLabel="Mike"></nz-option>
+      </nz-select>
+    </div>
+    <div nz-col nzSpan="6">
+      <nz-select [(ngModel)]="addValue" style="width: 100%">
+        <nz-option nzValue="jack" nzLabel="Jack"></nz-option>
+        <nz-option nzValue="lucy" nzLabel="Lucy"></nz-option>
+        <nz-option nzValue="tom" nzLabel="Tom"></nz-option>
+        <nz-option nzValue="mike" nzLabel="Mike"></nz-option>
+      </nz-select>
+    </div>
+    <div nz-col nzSpan="6">
+      <nz-input-number
+        [(ngModel)]="addQuantity"
+        [nzMin]="1"
+        [nzStep]="1"
+        style="width: 100%"
+      ></nz-input-number>
+    </div>
+    <div nz-col nzSpan="6">
+      <button
+        nz-button
+        nzType="primary"
+        (click)="addItem(addPlace, addValue, addQuantity)"
+      >
+        添加
+      </button>
+    </div>
+  </div>
+</nz-card>
 
-<p>删除物资</p>
-<nz-select [(ngModel)]="removeValue">
-  <nz-option nzValue="jack" nzLabel="Jack"></nz-option>
-  <nz-option nzValue="lucy" nzLabel="Lucy"></nz-option>
-  <nz-option nzValue="tom" nzLabel="Tom"></nz-option>
-  <nz-option nzValue="mike" nzLabel="Mike"></nz-option>
-</nz-select>
-
-<input
-  [(ngModel)]="removeQuantity"
-  type="number"
-  nz-input
-  placeholder="数量"
-  nzSize="default"
-/>
-<button
-  nz-button
-  nzType="primary"
-  (click)="removeItem(removeValue, removeQuantity)"
->
-  删除
-</button>
+<nz-card>
+  <p>删除物资</p>
+  <div nz-row>
+    <div nz-col nzSpan="6">
+      <nz-select [(ngModel)]="deletePlace" style="width: 100%">
+        <nz-option nzValue="jack" nzLabel="Jack"></nz-option>
+        <nz-option nzValue="lucy" nzLabel="Lucy"></nz-option>
+        <nz-option nzValue="tom" nzLabel="Tom"></nz-option>
+        <nz-option nzValue="mike" nzLabel="Mike"></nz-option>
+      </nz-select>
+    </div>
+    <div nz-col nzSpan="6">
+      <nz-select [(ngModel)]="deleteValue" style="width: 100%">
+        <nz-option nzValue="jack" nzLabel="Jack"></nz-option>
+        <nz-option nzValue="lucy" nzLabel="Lucy"></nz-option>
+        <nz-option nzValue="tom" nzLabel="Tom"></nz-option>
+        <nz-option nzValue="mike" nzLabel="Mike"></nz-option>
+      </nz-select>
+    </div>
+    <div nz-col nzSpan="6">
+      <nz-input-number
+        [(ngModel)]="deleteQuantity"
+        [nzMin]="1"
+        [nzStep]="1"
+        style="width: 100%"
+      ></nz-input-number>
+    </div>
+    <div nz-col nzSpan="6">
+      <button
+        nz-button
+        nzType="primary"
+        (click)="deleteItem(deletePlace, deleteValue, deleteQuantity)"
+      >
+        删除
+      </button>
+    </div>
+  </div>
+</nz-card>

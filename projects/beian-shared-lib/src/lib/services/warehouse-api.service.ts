@@ -19,6 +19,14 @@ export class WarehouseApiService {
   public addItem$(params: ItemParams) {
     console.log(params);
     return this.http.post<ItemParams>(
+      `${this.baseUrl}/your/add/item/endpoint`,
+      params,
+    );
+  }
+
+  public deleteItem$(params: ItemParams) {
+    console.log(params);
+    return this.http.post<ItemParams>(
       `${this.baseUrl}/your/remove/item/endpoint`,
       params,
     );
