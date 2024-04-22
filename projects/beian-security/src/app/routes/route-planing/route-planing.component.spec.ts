@@ -8,10 +8,9 @@ describe('RoutePlaningComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [RoutePlaningComponent]
-    })
-    .compileComponents();
-    
+      imports: [RoutePlaningComponent],
+    }).compileComponents();
+
     fixture = TestBed.createComponent(RoutePlaningComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();

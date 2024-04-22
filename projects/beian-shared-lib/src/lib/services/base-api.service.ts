@@ -1,5 +1,4 @@
 import { Injectable } from '@angular/core';
-import { BaseRes } from './interfaces/base-res';
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { BehaviorSubject } from 'rxjs';
 
@@ -17,13 +16,5 @@ export class BaseApiService {
 
   public get baseUrl() {
     return this._baseUrl$.value;
-  }
-
-  public baseResSucess(res: BaseRes<unknown>): boolean {
-    if (res.code != 200) {
-      this.message.error(res.msg);
-      return false;
-    }
-    return true;
   }
 }

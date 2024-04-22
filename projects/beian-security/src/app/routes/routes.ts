@@ -5,7 +5,7 @@ import { LoginComponent } from './passport/login/login.component';
 
 import { ServiceCenterComponent } from './service-center/service-center.component';
 import { WelcomeComponent } from './welcome/welcome.component';
-import { authGuardGuard } from '../guards/auth-guard.guard';
+// import { authGuardGuard } from '../guards/auth-guard.guard';
 import { RegisterComponent } from './passport/register/register.component';
 import { WarehouseManageComponent } from './warehouse-manage/warehouse-manage.component';
 import { RoutePlaningComponent } from './route-planing/route-planing.component';

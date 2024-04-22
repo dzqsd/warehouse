@@ -6,8 +6,6 @@ import { CommonModule } from '@angular/common';
   standalone: true,
   imports: [CommonModule],
   templateUrl: './resource-supply.component.html',
-  styleUrl: './resource-supply.component.less'
+  styleUrl: './resource-supply.component.less',
 })
-export class ResourceSupplyComponent {
-
-}
+export class ResourceSupplyComponent {}

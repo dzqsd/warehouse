@@ -6,8 +6,6 @@ import { CommonModule } from '@angular/common';
   standalone: true,
   imports: [CommonModule],
   templateUrl: './urgent-plan.component.html',
-  styleUrl: './urgent-plan.component.less'
+  styleUrl: './urgent-plan.component.less',
 })
-export class UrgentPlanComponent {
-
-}
+export class UrgentPlanComponent {}

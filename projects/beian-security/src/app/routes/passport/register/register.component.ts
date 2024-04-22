@@ -17,7 +17,6 @@ import {
   of,
   map,
   switchMap,
-  Observable,
   BehaviorSubject,
 } from 'rxjs';
 import { UserService } from '../../../services/user.service';
@@ -25,8 +24,6 @@ import { UserService } from '../../../services/user.service';
 @Component({
   selector: 'app-register',
   standalone: true,
-  templateUrl: './register.component.html',
-  styleUrl: './register.component.less',
   imports: [
     CommonModule,
     NzPageHeaderModule,
@@ -34,6 +31,8 @@ import { UserService } from '../../../services/user.service';
     NzLayoutModule,
     NzSkeletonModule,
   ],
+  templateUrl: './register.component.html',
+  styleUrl: './register.component.less',
 })
 export class RegisterComponent implements OnInit {
   destroyRef = inject(DestroyRef);

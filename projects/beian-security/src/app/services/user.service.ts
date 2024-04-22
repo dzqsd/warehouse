@@ -5,10 +5,9 @@ import {
   JwtService,
   UserApiService,
   UserInfo,
-  RegistrationInfo,
 } from 'beian-shared-lib';
 import { NzMessageService } from 'ng-zorro-antd/message';
-import { BehaviorSubject, Observable, first, map, of, switchMap } from 'rxjs';
+import { BehaviorSubject, Observable, map, of, switchMap } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
