@@ -1,1 +1,11 @@
-<p>route-planing works!</p>
+<nz-page-header
+  nzTitle="运输路线规划"
+  nzSubtitle="运输路线"
+  [nzGhost]="false"
+></nz-page-header>
+<nz-card>运输</nz-card>
+
+<nz-card>
+  <!-- <img src="/assets/map.png" alt="Map Image" /> -->
+  <app-fa-graph [data$]="data$"></app-fa-graph>
+</nz-card>

@@ -12,6 +12,7 @@ export * from './lib/custom-description/interfaces/custom-description';
 export * from './lib/services/base-api.service';
 export * from './lib/services/user-api.service';
 export * from './lib/services/warehouse-api.service';
+//export * from './lib/services/route-planing-api.service';
 
 export * from './lib/services/local-storage.service';
 export * from './lib/services/jwt.service';
