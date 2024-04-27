@@ -6,6 +6,14 @@ import { FaGraphComponent } from '../fa-graph/fa-graph.component';
 import { BehaviorSubject } from 'rxjs';
 import { GraphData } from '@antv/g6';
 import G6 from '@antv/g6';
+import { NzSelectModule } from 'ng-zorro-antd/select';
+import { FormsModule } from '@angular/forms';
+import { NzButtonModule } from 'ng-zorro-antd/button';
+import { NzInputNumberModule } from 'ng-zorro-antd/input-number';
+import { NzMessageService } from 'ng-zorro-antd/message';
+import { HttpClient } from '@angular/common/http';
+import { TransParams, RoutePlaningApiService } from 'beian-shared-lib';
+import { NzGridModule } from 'ng-zorro-antd/grid';
 
 G6.registerEdge(
   'circle-running', // 自定义边类型名称
@@ -48,9 +56,58 @@ G6.registerEdge(
   standalone: true,
   templateUrl: './route-planing.component.html',
   styleUrl: './route-planing.component.less',
-  imports: [CommonModule, NzCardModule, NzPageHeaderModule, FaGraphComponent],
+  imports: [
+    CommonModule,
+    NzCardModule,
+    NzPageHeaderModule,
+    FaGraphComponent,
+    NzSelectModule,
+    FormsModule,
+    NzButtonModule,
+    NzInputNumberModule,
+    NzGridModule,
+  ],
 })
 export class RoutePlaningComponent {
+  transPlace: string | null = null; //地点
+  transType: string | null = null; //物资类型
+  transQuantity: number = 0; //物资数量
+  transportRoute: string | null = '无';
+
+  constructor(
+    private message: NzMessageService,
+    private http: HttpClient,
+    private routePlaningApiService: RoutePlaningApiService,
+  ) {}
+
+  trans(place: string | null, itemName: string | null, quantity: number): void {
+    if (place === null || itemName === null || quantity === null) {
+      this.message.error('物资名或数量为空!');
+      return;
+    }
+    // 运输物资
+    console.log(
+      '运输地点',
+      place,
+      '运输物资：',
+      itemName,
+      '，数量：',
+      quantity,
+    );
+    const params: TransParams = { place, itemName, quantity };
+    this.routePlaningApiService.transItem$(params).subscribe(
+      (res) => {
+        console.log('物资添加成功', res);
+        //显示运输路线res
+        //this.transportRoute = `路线:${res.route}`; //res中的route属性
+      },
+      (error) => {
+        this.message.error('运输请求失败');
+        console.error('运输错误:', error);
+      },
+    );
+  }
+
   public data$ = new BehaviorSubject<GraphData>({
     nodes: [
       {

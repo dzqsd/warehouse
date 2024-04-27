@@ -3,7 +3,50 @@
   nzSubtitle="运输路线"
   [nzGhost]="false"
 ></nz-page-header>
-<nz-card>运输</nz-card>
+
+<nz-card>
+  <p>运输物资</p>
+  <div nz-row>
+    <div nz-col nzSpan="6">
+      <nz-select [(ngModel)]="transPlace" style="width: 100%">
+        <nz-option nzValue="jack" nzLabel="Jack"></nz-option>
+        <nz-option nzValue="lucy" nzLabel="Lucy"></nz-option>
+        <nz-option nzValue="tom" nzLabel="Tom"></nz-option>
+        <nz-option nzValue="mike" nzLabel="Mike"></nz-option>
+      </nz-select>
+    </div>
+    <div nz-col nzSpan="6">
+      <nz-select [(ngModel)]="transType" style="width: 100%">
+        <nz-option nzValue="jack" nzLabel="Jack"></nz-option>
+        <nz-option nzValue="lucy" nzLabel="Lucy"></nz-option>
+        <nz-option nzValue="tom" nzLabel="Tom"></nz-option>
+        <nz-option nzValue="mike" nzLabel="Mike"></nz-option>
+      </nz-select>
+    </div>
+    <div nz-col nzSpan="6">
+      <nz-input-number
+        [(ngModel)]="transQuantity"
+        [nzMin]="1"
+        [nzStep]="1"
+        style="width: 100%"
+      ></nz-input-number>
+    </div>
+    <div nz-col nzSpan="6">
+      <button
+        nz-button
+        nzType="primary"
+        (click)="trans(transPlace, transType, transQuantity)"
+      >
+        运输
+      </button>
+    </div>
+  </div>
+</nz-card>
+
+<nz-card>
+  <p>运输路线规划</p>
+  <div class="path" *ngIf="transportRoute">路线: {{ transportRoute }}</div>
+</nz-card>
 
 <nz-card>
   <!-- <img src="/assets/map.png" alt="Map Image" /> -->

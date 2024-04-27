@@ -12,7 +12,7 @@ export * from './lib/custom-description/interfaces/custom-description';
 export * from './lib/services/base-api.service';
 export * from './lib/services/user-api.service';
 export * from './lib/services/warehouse-api.service';
-//export * from './lib/services/route-planing-api.service';
+export * from './lib/services/route-planing-api.service';
 
 export * from './lib/services/local-storage.service';
 export * from './lib/services/jwt.service';
@@ -20,5 +20,6 @@ export * from './lib/services/jwt.service';
 export * from './lib/services/interfaces/base-res';
 export * from './lib/services/interfaces/user-api';
 export * from './lib/services/interfaces/warehouse-api';
+export * from './lib/services/interfaces/route-planing-api';
 
 export * from './lib/interceptors/jwt.interceptor';

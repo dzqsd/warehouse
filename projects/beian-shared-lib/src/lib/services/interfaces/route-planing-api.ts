@@ -1,5 +1,5 @@
-// export interface ItemParams {
-//   place: string;
-//   itemName: string;
-//   quantity: number;
-// }
+export interface TransParams {
+  place: string;
+  itemName: string;
+  quantity: number;
+}

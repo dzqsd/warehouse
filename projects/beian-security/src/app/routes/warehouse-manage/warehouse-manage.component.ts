@@ -41,6 +41,11 @@ export class WarehouseManageComponent {
     private wareHouseApiService: WarehouseApiService,
   ) {}
 
+  show(): void {
+    console.log('查看物资');
+    return;
+  }
+
   addItem(
     place: string | null,
     itemName: string | null,
