@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { BaseApiService } from './base-api.service';
 import { HttpClient } from '@angular/common/http';
-import { ItemParams } from './interfaces/warehouse-api';
+import { ItemParams, WarehouseItem } from './interfaces/warehouse-api';
 
 @Injectable({
   providedIn: 'root',
@@ -18,17 +18,15 @@ export class WarehouseApiService {
 
   public addItem$(params: ItemParams) {
     console.log(params);
-    return this.http.post<ItemParams>(
-      `${this.baseUrl}/your/add/item/endpoint`,
-      params,
-    );
+    return this.http.post<ItemParams>(`${this.baseUrl}/add`, params);
   }
 
   public deleteItem$(params: ItemParams) {
     console.log(params);
-    return this.http.post<ItemParams>(
-      `${this.baseUrl}/your/remove/item/endpoint`,
-      params,
-    );
+    return this.http.post<ItemParams>(`${this.baseUrl}/remove`, params);
+  }
+
+  public getItem$() {
+    return this.http.get<WarehouseItem>(`${this.baseUrl}/getItem`);
   }
 }
