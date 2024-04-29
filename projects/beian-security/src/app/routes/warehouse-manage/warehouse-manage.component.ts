@@ -190,7 +190,7 @@ export class WarehouseManageComponent {
     },
     {
       place: 'Place3',
-      item1: 121,
+      item1: 1211,
       item2: 2222,
       item3: 52413,
       item4: 6424,
