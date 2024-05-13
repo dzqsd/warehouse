@@ -18,16 +18,16 @@ export class WarehouseApiService {
 
   public addItem$(params: ItemParams) {
     console.log(params);
-    return this.http.post<ItemParams>(`${this.baseUrl}/test`, params);
+    return this.http.post<ItemParams>(`${this.baseUrl}/graph/change`, params);
   }
 
   public deleteItem$(params: ItemParams) {
     console.log(params);
-    return this.http.post<ItemParams>(`${this.baseUrl}/remove`, params);
+    return this.http.post<ItemParams>(`${this.baseUrl}/graph/change`, params);
   }
 
   public getItem$() {
-    return this.http.get<WarehouseItem>(`${this.baseUrl}/getItem`);
+    return this.http.get<WarehouseItem>(`${this.baseUrl}/graph/all`);
   }
 
   public test$() {

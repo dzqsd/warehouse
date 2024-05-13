@@ -6,7 +6,7 @@ import {
 } from 'ng-zorro-antd/table';
 
 export interface ItemParams {
-  place: string;
+  id: number;
   itemName: string;
   quantity: number;
 }

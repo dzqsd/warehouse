@@ -9,18 +9,20 @@
   <div nz-row>
     <div nz-col nzSpan="6">
       <nz-select [(ngModel)]="addPlace" style="width: 100%">
-        <nz-option nzValue="jack" nzLabel="Jack"></nz-option>
-        <nz-option nzValue="lucy" nzLabel="Lucy"></nz-option>
-        <nz-option nzValue="tom" nzLabel="Tom"></nz-option>
-        <nz-option nzValue="mike" nzLabel="Mike"></nz-option>
+        <nz-option
+          *ngFor="let place of places"
+          [nzValue]="place.id"
+          [nzLabel]="place.name"
+        ></nz-option>
       </nz-select>
     </div>
     <div nz-col nzSpan="6">
       <nz-select [(ngModel)]="addValue" style="width: 100%">
-        <nz-option nzValue="jack" nzLabel="Jack"></nz-option>
-        <nz-option nzValue="lucy" nzLabel="Lucy"></nz-option>
-        <nz-option nzValue="tom" nzLabel="Tom"></nz-option>
-        <nz-option nzValue="mike" nzLabel="Mike"></nz-option>
+        <nz-option
+          *ngFor="let good of goodsHeaders"
+          [nzValue]="good"
+          [nzLabel]="good"
+        ></nz-option>
       </nz-select>
     </div>
     <div nz-col nzSpan="6">
@@ -48,18 +50,20 @@
   <div nz-row>
     <div nz-col nzSpan="6">
       <nz-select [(ngModel)]="deletePlace" style="width: 100%">
-        <nz-option nzValue="jack" nzLabel="Jack"></nz-option>
-        <nz-option nzValue="lucy" nzLabel="Lucy"></nz-option>
-        <nz-option nzValue="tom" nzLabel="Tom"></nz-option>
-        <nz-option nzValue="mike" nzLabel="Mike"></nz-option>
+        <nz-option
+          *ngFor="let place of places"
+          [nzValue]="place.id"
+          [nzLabel]="place.name"
+        ></nz-option>
       </nz-select>
     </div>
     <div nz-col nzSpan="6">
       <nz-select [(ngModel)]="deleteValue" style="width: 100%">
-        <nz-option nzValue="jack" nzLabel="Jack"></nz-option>
-        <nz-option nzValue="lucy" nzLabel="Lucy"></nz-option>
-        <nz-option nzValue="tom" nzLabel="Tom"></nz-option>
-        <nz-option nzValue="mike" nzLabel="Mike"></nz-option>
+        <nz-option
+          *ngFor="let good of goodsHeaders"
+          [nzValue]="good"
+          [nzLabel]="good"
+        ></nz-option>
       </nz-select>
     </div>
     <div nz-col nzSpan="6">
@@ -86,3 +90,22 @@
   <p>物资可视化</p>
   <button nz-button nzType="primary" (click)="getItem()">查看物资</button>
 </nz-card>
+
+<nz-table #expandTable [nzData]="listOfMapData" nzTableLayout="fixed">
+  <thead>
+    <tr>
+      <th>ID</th>
+      <!-- 新增ID列 -->
+      <th>Name</th>
+      <th *ngFor="let header of goodsHeaders">{{ header }}</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let data of expandTable.data">
+      <td>{{ data.id }}</td>
+      <!-- 显示城市ID -->
+      <td>{{ data.name }}</td>
+      <td *ngFor="let amount of data.goodsamount_list">{{ amount }}</td>
+    </tr>
+  </tbody>
+</nz-table>
