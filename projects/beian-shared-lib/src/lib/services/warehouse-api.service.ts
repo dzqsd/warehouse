@@ -18,7 +18,7 @@ export class WarehouseApiService {
 
   public addItem$(params: ItemParams) {
     console.log(params);
-    return this.http.post<ItemParams>(`${this.baseUrl}/add`, params);
+    return this.http.post<ItemParams>(`${this.baseUrl}/test`, params);
   }
 
   public deleteItem$(params: ItemParams) {
@@ -28,5 +28,9 @@ export class WarehouseApiService {
 
   public getItem$() {
     return this.http.get<WarehouseItem>(`${this.baseUrl}/getItem`);
+  }
+
+  public test$() {
+    return this.http.get<unknown>(`${this.baseUrl}/test`);
   }
 }

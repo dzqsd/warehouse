@@ -10,13 +10,21 @@ export interface ItemParams {
   itemName: string;
   quantity: number;
 }
+
+export interface GraphNode {
+  id: number;
+  name: string;
+  to_list: number[];
+  timecost_list: number[];
+  expressfee_list: number[];
+  goods_list: string[];
+  goodsamount_list: number[];
+}
+
 export interface WarehouseItem {
-  place: string;
-  item1: number;
-  item2: number;
-  item3: number;
-  item4: number;
-  item5: number;
+  msg: string;
+  state: boolean;
+  graph: GraphNode[];
 }
 
 export interface ColumnItem {

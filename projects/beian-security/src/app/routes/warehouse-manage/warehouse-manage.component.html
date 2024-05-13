@@ -84,33 +84,5 @@
 
 <nz-card>
   <p>物资可视化</p>
-  <button nz-button nzType="primary" (click)="show()">查看物资</button>
+  <button nz-button nzType="primary" (click)="getItem()">查看物资</button>
 </nz-card>
-
-<nz-table #filterTable [nzData]="listOfData" nzTableLayout="fixed">
-  <thead>
-    <tr>
-      <th
-        *ngFor="let column of listOfColumns"
-        [nzSortOrder]="column.sortOrder"
-        [nzSortFn]="column.sortFn"
-        [nzSortDirections]="column.sortDirections"
-        [nzFilterMultiple]="column.filterMultiple"
-        [nzFilters]="column.listOfFilter"
-        [nzFilterFn]="column.filterFn"
-      >
-        {{ column.name }}
-      </th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr *ngFor="let data of filterTable.data">
-      <td>{{ data.place }}</td>
-      <td>{{ data.item1 }}</td>
-      <td>{{ data.item2 }}</td>
-      <td>{{ data.item3 }}</td>
-      <td>{{ data.item4 }}</td>
-      <td>{{ data.item5 }}</td>
-    </tr>
-  </tbody>
-</nz-table>
