@@ -17,13 +17,33 @@
       </nz-select>
     </div>
     <div nz-col nzSpan="6">
-      <nz-select [(ngModel)]="addValue" style="width: 100%">
+      <nz-select
+        nzShowSearch
+        nzAllowClear
+        [nzDropdownRender]="addRenderTemplate"
+        nzPlaceHolder=""
+        [(ngModel)]="addValue"
+        style="width: 100%"
+      >
         <nz-option
           *ngFor="let good of goodsHeaders"
           [nzValue]="good"
           [nzLabel]="good"
         ></nz-option>
       </nz-select>
+      <ng-template #addRenderTemplate>
+        <nz-divider></nz-divider>
+        <div class="container">
+          <input type="text" nz-input #addInputElement />
+          <a
+            class="add-item"
+            (click)="addItem(addPlace, null, addQuantity, addInputElement)"
+          >
+            <span nz-icon nzType="plus"></span>
+            添加新物资类型
+          </a>
+        </div>
+      </ng-template>
     </div>
     <div nz-col nzSpan="6">
       <nz-input-number
@@ -58,13 +78,35 @@
       </nz-select>
     </div>
     <div nz-col nzSpan="6">
-      <nz-select [(ngModel)]="deleteValue" style="width: 100%">
+      <nz-select
+        nzShowSearch
+        nzAllowClear
+        [nzDropdownRender]="deleteRenderTemplate"
+        nzPlaceHolder=""
+        [(ngModel)]="deleteValue"
+        style="width: 100%"
+      >
         <nz-option
           *ngFor="let good of goodsHeaders"
           [nzValue]="good"
           [nzLabel]="good"
         ></nz-option>
       </nz-select>
+      <ng-template #deleteRenderTemplate>
+        <nz-divider></nz-divider>
+        <div class="container">
+          <input type="text" nz-input #deleteInputElement />
+          <a
+            class="add-item"
+            (click)="
+              deleteItem(deletePlace, null, deleteQuantity, deleteInputElement)
+            "
+          >
+            <span nz-icon nzType="plus"></span>
+            添加新物资类型
+          </a>
+        </div>
+      </ng-template>
     </div>
     <div nz-col nzSpan="6">
       <nz-input-number

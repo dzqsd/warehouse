@@ -9,18 +9,20 @@
   <div nz-row>
     <div nz-col nzSpan="6">
       <nz-select [(ngModel)]="transPlace" style="width: 100%">
-        <nz-option nzValue="jack" nzLabel="Jack"></nz-option>
-        <nz-option nzValue="lucy" nzLabel="Lucy"></nz-option>
-        <nz-option nzValue="tom" nzLabel="Tom"></nz-option>
-        <nz-option nzValue="mike" nzLabel="Mike"></nz-option>
+        <nz-option
+          *ngFor="let place of places"
+          [nzValue]="place.id"
+          [nzLabel]="place.name"
+        ></nz-option>
       </nz-select>
     </div>
     <div nz-col nzSpan="6">
       <nz-select [(ngModel)]="transType" style="width: 100%">
-        <nz-option nzValue="jack" nzLabel="Jack"></nz-option>
-        <nz-option nzValue="lucy" nzLabel="Lucy"></nz-option>
-        <nz-option nzValue="tom" nzLabel="Tom"></nz-option>
-        <nz-option nzValue="mike" nzLabel="Mike"></nz-option>
+        <nz-option
+          *ngFor="let good of goodsHeaders"
+          [nzValue]="good"
+          [nzLabel]="good"
+        ></nz-option>
       </nz-select>
     </div>
     <div nz-col nzSpan="6">

@@ -15,6 +15,9 @@ import { NzGridModule } from 'ng-zorro-antd/grid';
 import { NzCardModule } from 'ng-zorro-antd/card';
 import { NzPageHeaderModule } from 'ng-zorro-antd/page-header';
 import { NzTableModule } from 'ng-zorro-antd/table';
+import { NzDividerModule } from 'ng-zorro-antd/divider';
+import { NzIconModule } from 'ng-zorro-antd/icon';
+import { NzInputModule } from 'ng-zorro-antd/input';
 
 interface MapData {
   id: number;
@@ -40,6 +43,9 @@ interface Place {
     NzCardModule,
     NzPageHeaderModule,
     NzTableModule,
+    NzDividerModule,
+    NzIconModule,
+    NzInputModule,
   ],
   templateUrl: './warehouse-manage.component.html',
   styleUrl: './warehouse-manage.component.less',
@@ -66,7 +72,21 @@ export class WarehouseManageComponent implements OnInit {
     this.getItem();
   }
 
-  addItem(id: number, itemName: string | null, quantity: number): void {
+  addItem(
+    id: number,
+    itemName: string | null,
+    quantity: number,
+    inputElement?: HTMLInputElement,
+  ): void {
+    if (inputElement) {
+      const newGood = inputElement.value.trim();
+      if (newGood && !this.goodsHeaders.includes(newGood)) {
+        itemName = newGood;
+        this.goodsHeaders = [...this.goodsHeaders, newGood];
+        inputElement.value = '';
+      }
+    }
+
     if (!itemName || quantity <= 0) {
       this.message.error('物资名或数量无效!');
       return;
@@ -76,10 +96,25 @@ export class WarehouseManageComponent implements OnInit {
     const params: ItemParams = { id, itemName, quantity };
     this.wareHouseApiService.addItem$(params).subscribe((res) => {
       console.log('物资添加成功', res);
+      this.getItem(); // 更新物资数据
     });
   }
 
-  deleteItem(id: number, itemName: string | null, quantity: number): void {
+  deleteItem(
+    id: number,
+    itemName: string | null,
+    quantity: number,
+    inputElement?: HTMLInputElement,
+  ): void {
+    if (inputElement) {
+      const newGood = inputElement.value.trim();
+      if (newGood && !this.goodsHeaders.includes(newGood)) {
+        itemName = newGood;
+        this.goodsHeaders = [...this.goodsHeaders, newGood];
+        inputElement.value = '';
+      }
+    }
+
     if (!itemName || quantity <= 0) {
       this.message.error('物资名或数量无效!');
       return;
@@ -90,6 +125,7 @@ export class WarehouseManageComponent implements OnInit {
     const params: ItemParams = { id, itemName, quantity };
     this.wareHouseApiService.deleteItem$(params).subscribe((res) => {
       console.log('物资删除成功', res);
+      this.getItem(); // 更新物资数据
     });
   }
 
@@ -98,8 +134,14 @@ export class WarehouseManageComponent implements OnInit {
     this.wareHouseApiService.getItem$().subscribe((res: WarehouseItem) => {
       console.log(res);
       if (res.graph.length > 0) {
-        // 提取物资类型，假设所有节点物资类型相同，以第一个节点为基准生成表头
-        this.goodsHeaders = res.graph[0].goods_list;
+        // 提取物资类型
+        const allGoodsSet = new Set<string>();
+        res.graph.forEach((node) => {
+          node.goods_list.forEach((good) => {
+            allGoodsSet.add(good);
+          });
+        });
+        this.goodsHeaders = Array.from(allGoodsSet);
 
         // 提取所有不同的地点
         this.places = res.graph.map((node) => ({
@@ -113,14 +155,20 @@ export class WarehouseManageComponent implements OnInit {
             index ===
             self.findIndex((p) => p.id === place.id && p.name === place.name),
         );
-      }
 
-      // 提取物资数据列表
-      this.listOfMapData = res.graph.map((node) => ({
-        id: node.id,
-        name: node.name,
-        goodsamount_list: node.goodsamount_list,
-      }));
+        // 初始化物资数据列表，确保所有地点的新物资数量都被初始化为 0
+        this.listOfMapData = res.graph.map((node) => {
+          const goodsamount_list = this.goodsHeaders.map((good) => {
+            const goodIndex = node.goods_list.indexOf(good);
+            return goodIndex !== -1 ? node.goodsamount_list[goodIndex] : 0;
+          });
+          return {
+            id: node.id,
+            name: node.name,
+            goodsamount_list,
+          };
+        });
+      }
     });
   }
 }
