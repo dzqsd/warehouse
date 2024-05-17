@@ -22,6 +22,11 @@ export class RoutePlaningApiService {
     return this.http.post<TransParams>(`${this.baseUrl}/trans`, params);
   }
 
+  public transItemBatch$(params: TransParams[]) {
+    console.log(params);
+    return this.http.post<TransParams[]>(`${this.baseUrl}/trans/batch`, params);
+  }
+
   public getItem$() {
     return this.http.get<WarehouseItem>(`${this.baseUrl}/graph/all`);
   }

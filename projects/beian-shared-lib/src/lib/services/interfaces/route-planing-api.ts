@@ -1,5 +1,5 @@
 export interface TransParams {
-  place: string;
+  id: number;
   itemName: string;
   quantity: number;
 }

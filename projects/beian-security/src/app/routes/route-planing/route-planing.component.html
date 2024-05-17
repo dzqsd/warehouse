@@ -6,43 +6,67 @@
 
 <nz-card>
   <p>运输物资</p>
-  <div nz-row>
-    <div nz-col nzSpan="6">
-      <nz-select [(ngModel)]="transPlace" style="width: 100%">
-        <nz-option
-          *ngFor="let place of places"
-          [nzValue]="place.id"
-          [nzLabel]="place.name"
-        ></nz-option>
-      </nz-select>
-    </div>
-    <div nz-col nzSpan="6">
-      <nz-select [(ngModel)]="transType" style="width: 100%">
-        <nz-option
-          *ngFor="let good of goodsHeaders"
-          [nzValue]="good"
-          [nzLabel]="good"
-        ></nz-option>
-      </nz-select>
-    </div>
-    <div nz-col nzSpan="6">
-      <nz-input-number
-        [(ngModel)]="transQuantity"
-        [nzMin]="1"
-        [nzStep]="1"
-        style="width: 100%"
-      ></nz-input-number>
-    </div>
-    <div nz-col nzSpan="6">
-      <button
-        nz-button
-        nzType="primary"
-        (click)="trans(transPlace, transType, transQuantity)"
-      >
-        运输
-      </button>
-    </div>
-  </div>
+  <nz-form [nzLayout]="'horizontal'">
+    <nz-form-item>
+      <nz-form-label [nzSpan]="6">选择地点</nz-form-label>
+      <nz-form-control [nzSpan]="18">
+        <nz-select
+          nzMode="multiple"
+          [(ngModel)]="transPlaces"
+          style="width: 100%"
+          nzPlaceHolder="选择地点"
+        >
+          <nz-option
+            *ngFor="let place of places"
+            [nzValue]="place.id"
+            [nzLabel]="place.name"
+          ></nz-option>
+        </nz-select>
+      </nz-form-control>
+    </nz-form-item>
+
+    <nz-form-item>
+      <nz-form-label [nzSpan]="6">物资类型</nz-form-label>
+      <nz-form-control [nzSpan]="18">
+        <nz-select
+          [(ngModel)]="transType"
+          style="width: 100%"
+          nzPlaceHolder="选择物资类型"
+        >
+          <nz-option
+            *ngFor="let good of goodsHeaders"
+            [nzValue]="good"
+            [nzLabel]="good"
+          ></nz-option>
+        </nz-select>
+      </nz-form-control>
+    </nz-form-item>
+
+    <nz-form-item *ngFor="let place of transPlaces">
+      <nz-form-label [nzSpan]="6">{{ getPlaceNameById(place) }}</nz-form-label>
+      <nz-form-control [nzSpan]="18">
+        <nz-input-number
+          [(ngModel)]="transQuantities[place]"
+          [nzMin]="1"
+          [nzStep]="1"
+          style="width: 100%"
+        ></nz-input-number>
+      </nz-form-control>
+    </nz-form-item>
+
+    <nz-form-item>
+      <nz-form-control [nzSpan]="24" class="text-right">
+        <button
+          nz-button
+          nzType="primary"
+          (click)="trans()"
+          [disabled]="!transPlaces.length || !transType"
+        >
+          运输
+        </button>
+      </nz-form-control>
+    </nz-form-item>
+  </nz-form>
 </nz-card>
 
 <nz-card>
@@ -51,6 +75,5 @@
 </nz-card>
 
 <nz-card>
-  <!-- <img src="/assets/map.png" alt="Map Image" /> -->
   <app-fa-graph [data$]="data$"></app-fa-graph>
 </nz-card>

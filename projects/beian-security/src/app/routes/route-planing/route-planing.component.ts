@@ -18,6 +18,8 @@ import {
   WarehouseItem,
 } from 'beian-shared-lib';
 import { NzGridModule } from 'ng-zorro-antd/grid';
+import { NzFormModule } from 'ng-zorro-antd/form';
+import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 
 G6.registerEdge(
   'circle-running', // 自定义边类型名称
@@ -64,7 +66,7 @@ interface Place {
   selector: 'app-route-planing',
   standalone: true,
   templateUrl: './route-planing.component.html',
-  styleUrl: './route-planing.component.less',
+  styleUrls: ['./route-planing.component.less'],
   imports: [
     CommonModule,
     NzCardModule,
@@ -75,15 +77,46 @@ interface Place {
     NzButtonModule,
     NzInputNumberModule,
     NzGridModule,
+    NzFormModule,
   ],
+  schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })
 export class RoutePlaningComponent implements OnInit {
-  transPlace: string | null = null; //地点
-  transType: string | null = null; //物资类型
-  transQuantity: number = 0; //物资数量
+  transPlaces: number[] = []; // 多选地点
+  transType: string | null = null; // 物资类型
+  transQuantities: { [key: number]: number } = {}; // 每个地点对应的物资数量
   transportRoute: string | null = '无';
   places: Place[] = []; // 存储地点和它们的 ID
   goodsHeaders: string[] = []; // 存储物资类型
+  data$: BehaviorSubject<GraphData> = new BehaviorSubject<GraphData>({
+    nodes: [
+      { id: 'node1', x: 722, y: 607, label: '台湾' },
+      { id: 'node2', x: 560, y: 534, label: '湖南' },
+      { id: 'node3', x: 455, y: 430, label: '甘肃' },
+      { id: 'node4', x: 258, y: 493, label: '西藏' },
+      { id: 'node5', x: 523, y: 301, label: '内蒙古' },
+      { id: 'node6', x: 223, y: 264, label: '新疆' },
+      { id: 'node7', x: 730, y: 177, label: '黑龙江' },
+      { id: 'node8', x: 584, y: 439, label: '河南' },
+      { id: 'node9', x: 592, y: 623, label: '广东' },
+      { id: 'node10', x: 618, y: 318, label: '北京' },
+    ],
+    edges: [
+      { source: 'node2', target: 'node3', label: 'edge 2' },
+      { source: 'node3', target: 'node8', label: 'edge 3' },
+      { source: 'node1', target: 'node9', label: 'edge 4' },
+      { source: 'node4', target: 'node3', label: 'edge 5' },
+      { source: 'node2', target: 'node8', label: 'edge 6' },
+      { source: 'node3', target: 'node5', label: 'edge 8' },
+      { source: 'node4', target: 'node6', label: 'edge 9' },
+      { source: 'node5', target: 'node10', label: 'edge 10' },
+      { source: 'node5', target: 'node6', label: 'edge 11' },
+      { source: 'node8', target: 'node10', label: 'edge 12' },
+      { source: 'node8', target: 'node9', label: 'edge 13' },
+      { source: 'node7', target: 'node10', label: 'edge 14' },
+      { source: 'node2', target: 'node9', label: 'edge 15' },
+    ],
+  });
 
   constructor(
     private message: NzMessageService,
@@ -117,22 +150,26 @@ export class RoutePlaningComponent implements OnInit {
     });
   }
 
-  trans(place: string | null, itemName: string | null, quantity: number): void {
-    if (place === null || itemName === null || quantity <= 0) {
-      this.message.error('物资名或数量无效!');
+  getPlaceNameById(id: number): string {
+    const place = this.places.find((p) => p.id === id);
+    return place ? place.name : 'Unknown';
+  }
+
+  trans(): void {
+    if (!this.transPlaces.length || !this.transType) {
+      this.message.error('请选择地点和物资类型!');
       return;
     }
 
-    console.log(
-      '运输地点',
-      place,
-      '运输物资：',
-      itemName,
-      '，数量：',
-      quantity,
-    );
-    const params: TransParams = { place, itemName, quantity };
-    this.routePlaningApiService.transItem$(params).subscribe(
+    const params: TransParams[] = this.transPlaces.map((placeId) => ({
+      id: placeId,
+      itemName: this.transType!,
+      quantity: this.transQuantities[placeId] || 0,
+    }));
+
+    console.log('运输参数', params);
+
+    this.routePlaningApiService.transItemBatch$(params).subscribe(
       (res) => {
         console.log('物资运输成功', res);
         // 显示运输路线res
@@ -144,34 +181,4 @@ export class RoutePlaningComponent implements OnInit {
       },
     );
   }
-
-  public data$ = new BehaviorSubject<GraphData>({
-    nodes: [
-      { id: 'node1', x: 722, y: 607, label: '台湾' },
-      { id: 'node2', x: 560, y: 534, label: '湖南' },
-      { id: 'node3', x: 455, y: 430, label: '甘肃' },
-      { id: 'node4', x: 258, y: 493, label: '西藏' },
-      { id: 'node5', x: 523, y: 301, label: '内蒙古' },
-      { id: 'node6', x: 223, y: 264, label: '新疆' },
-      { id: 'node7', x: 730, y: 177, label: '黑龙江' },
-      { id: 'node8', x: 584, y: 439, label: '河南' },
-      { id: 'node9', x: 592, y: 623, label: '广东' },
-      { id: 'node10', x: 618, y: 318, label: '北京' },
-    ],
-    edges: [
-      { source: 'node2', target: 'node3', label: 'edge 2' },
-      { source: 'node3', target: 'node8', label: 'edge 3' },
-      { source: 'node1', target: 'node9', label: 'edge 4' },
-      { source: 'node4', target: 'node3', label: 'edge 5' },
-      { source: 'node2', target: 'node8', label: 'edge 6' },
-      { source: 'node3', target: 'node5', label: 'edge 8' },
-      { source: 'node4', target: 'node6', label: 'edge 9' },
-      { source: 'node5', target: 'node10', label: 'edge 10' },
-      { source: 'node5', target: 'node6', label: 'edge 11' },
-      { source: 'node8', target: 'node10', label: 'edge 12' },
-      { source: 'node8', target: 'node9', label: 'edge 13' },
-      { source: 'node7', target: 'node10', label: 'edge 14' },
-      { source: 'node2', target: 'node9', label: 'edge 15' },
-    ],
-  });
 }
