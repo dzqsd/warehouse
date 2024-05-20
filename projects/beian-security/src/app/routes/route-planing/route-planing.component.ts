@@ -100,21 +100,34 @@ export class RoutePlaningComponent implements OnInit {
       { id: 'node8', x: 584, y: 439, label: '河南' },
       { id: 'node9', x: 592, y: 623, label: '广东' },
       { id: 'node10', x: 618, y: 318, label: '北京' },
+      { id: 'node11', x: 380, y: 600, label: '云南' },
+      { id: 'node12', x: 400, y: 510, label: '四川' },
+      { id: 'node13', x: 320, y: 400, label: '青海' },
+      { id: 'node14', x: 690, y: 450, label: '江苏' },
+      { id: 'node15', x: 650, y: 380, label: '山东' },
+      // 新增节点
     ],
     edges: [
-      { source: 'node2', target: 'node3', label: 'edge 2' },
-      { source: 'node3', target: 'node8', label: 'edge 3' },
-      { source: 'node1', target: 'node9', label: 'edge 4' },
-      { source: 'node4', target: 'node3', label: 'edge 5' },
-      { source: 'node2', target: 'node8', label: 'edge 6' },
-      { source: 'node3', target: 'node5', label: 'edge 8' },
-      { source: 'node4', target: 'node6', label: 'edge 9' },
-      { source: 'node5', target: 'node10', label: 'edge 10' },
-      { source: 'node5', target: 'node6', label: 'edge 11' },
-      { source: 'node8', target: 'node10', label: 'edge 12' },
-      { source: 'node8', target: 'node9', label: 'edge 13' },
-      { source: 'node7', target: 'node10', label: 'edge 14' },
-      { source: 'node2', target: 'node9', label: 'edge 15' },
+      { source: 'node2', target: 'node3', label: 'edge 2' }, // 湖南、甘肃
+      { source: 'node3', target: 'node8', label: 'edge 3' }, // 甘肃、河南
+      { source: 'node1', target: 'node9', label: 'edge 4' }, // 台湾、广东
+      { source: 'node4', target: 'node3', label: 'edge 5' }, // 西藏、甘肃
+      { source: 'node2', target: 'node8', label: 'edge 6' }, // 湖南、河南
+      { source: 'node3', target: 'node5', label: 'edge 8' }, // 甘肃、内蒙古
+      { source: 'node4', target: 'node6', label: 'edge 9' }, // 西藏、新疆
+      { source: 'node5', target: 'node10', label: 'edge 10' }, // 内蒙古、北京
+      { source: 'node5', target: 'node6', label: 'edge 11' }, // 内蒙古、新疆
+      { source: 'node8', target: 'node10', label: 'edge 12' }, // 河南、北京
+      { source: 'node8', target: 'node9', label: 'edge 13' }, // 河南、广东
+      { source: 'node7', target: 'node10', label: 'edge 14' }, // 黑龙江、北京
+      { source: 'node2', target: 'node9', label: 'edge 15' }, // 湖南、广东
+      { source: 'node11', target: 'node12', label: 'edge 16' }, // 云南、四川
+      { source: 'node12', target: 'node3', label: 'edge 17' }, // 四川、甘肃
+      { source: 'node3', target: 'node13', label: 'edge 18' }, // 甘肃、青海
+      { source: 'node14', target: 'node8', label: 'edge 19' }, // 江苏、河南
+      { source: 'node15', target: 'node8', label: 'edge 20' }, // 山东、河南
+      { source: 'node14', target: 'node15', label: 'edge 21' }, // 江苏、山东
+      // 新增边
     ],
   });
 
@@ -173,7 +186,7 @@ export class RoutePlaningComponent implements OnInit {
       (res) => {
         console.log('物资运输成功', res);
         // 显示运输路线res
-        // this.transportRoute = `路线:${res.route}`; //res中的route属性
+        this.transportRoute = `路线:${res}`; //res中的route属性
       },
       (error) => {
         this.message.error('运输请求失败');

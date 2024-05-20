@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { AfterViewInit, Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { NzSelectModule } from 'ng-zorro-antd/select';
 import { FormsModule } from '@angular/forms';
@@ -18,6 +18,7 @@ import { NzTableModule } from 'ng-zorro-antd/table';
 import { NzDividerModule } from 'ng-zorro-antd/divider';
 import { NzIconModule } from 'ng-zorro-antd/icon';
 import { NzInputModule } from 'ng-zorro-antd/input';
+import { Bar, Column } from '@antv/g2plot'; // 导入 G2Plot 的 Bar 和 Column 图表
 
 interface MapData {
   id: number;
@@ -48,9 +49,9 @@ interface Place {
     NzInputModule,
   ],
   templateUrl: './warehouse-manage.component.html',
-  styleUrl: './warehouse-manage.component.less',
+  styleUrls: ['./warehouse-manage.component.less'],
 })
-export class WarehouseManageComponent implements OnInit {
+export class WarehouseManageComponent implements OnInit, AfterViewInit {
   addPlace: number = 0; // 地点ID
   addValue: string | null = null; //物资类型
   deletePlace: number = 0; // 地点ID
@@ -62,6 +63,10 @@ export class WarehouseManageComponent implements OnInit {
   goods: string[] = []; // 存储物资类型
   places: Place[] = []; // 存储地点和它们的 ID
 
+  // 图表相关变量
+  chart: Bar | null = null;
+  columnChart: Column | null = null;
+
   constructor(
     private message: NzMessageService,
     private http: HttpClient,
@@ -70,6 +75,87 @@ export class WarehouseManageComponent implements OnInit {
 
   ngOnInit(): void {
     this.getItem();
+  }
+
+  ngAfterViewInit(): void {
+    this.initChart();
+    this.initColumnChart();
+  }
+
+  initChart(): void {
+    this.chart = new Bar(document.getElementById('barChart') as HTMLElement, {
+      data: [],
+      isStack: true, // 使用堆叠条形图
+      xField: 'quantity',
+      yField: 'place',
+      seriesField: 'goods',
+      legend: {
+        position: 'top-left',
+      },
+      tooltip: {
+        shared: true,
+      },
+    });
+
+    this.chart.render();
+  }
+
+  initColumnChart(): void {
+    this.columnChart = new Column(
+      document.getElementById('columnChart') as HTMLElement,
+      {
+        data: [],
+        isGroup: true,
+        xField: 'goods',
+        yField: 'quantity',
+        seriesField: 'place',
+        legend: {
+          position: 'top-right',
+        },
+        tooltip: {
+          shared: true,
+        },
+        label: {
+          position: 'middle',
+          content: '',
+          style: {
+            fill: '#000000',
+          },
+        },
+      },
+    );
+
+    this.columnChart.render();
+  }
+
+  updateColumnChartContent(): void {
+    if (this.columnChart) {
+      const columnData = this.listOfMapData.flatMap((data) =>
+        data.goodsamount_list.map((amount, index) => ({
+          goods: this.goodsHeaders[index],
+          place: data.name,
+          quantity: amount,
+        })),
+      );
+
+      this.columnChart.changeData(columnData);
+    }
+  }
+
+  updateChart(): void {
+    if (this.chart) {
+      const chartData = this.listOfMapData.flatMap((data) =>
+        data.goodsamount_list.map((amount, index) => ({
+          place: data.name,
+          goods: this.goodsHeaders[index],
+          quantity: amount,
+        })),
+      );
+
+      this.chart.changeData(chartData);
+    }
+
+    this.updateColumnChartContent();
   }
 
   addItem(
@@ -92,11 +178,9 @@ export class WarehouseManageComponent implements OnInit {
       return;
     }
 
-    console.log('添加地点', id, '添加物资：', itemName, '，数量：', quantity);
     const params: ItemParams = { id, itemName, quantity };
-    this.wareHouseApiService.addItem$(params).subscribe((res) => {
-      console.log('物资添加成功', res);
-      this.getItem(); // 更新物资数据
+    this.wareHouseApiService.addItem$(params).subscribe(() => {
+      this.getItem();
     });
   }
 
@@ -120,21 +204,16 @@ export class WarehouseManageComponent implements OnInit {
       return;
     }
 
-    console.log('删除地点：', id, '删除物资：', itemName, '，数量：', quantity);
     quantity = quantity * -1;
     const params: ItemParams = { id, itemName, quantity };
-    this.wareHouseApiService.deleteItem$(params).subscribe((res) => {
-      console.log('物资删除成功', res);
-      this.getItem(); // 更新物资数据
+    this.wareHouseApiService.deleteItem$(params).subscribe(() => {
+      this.getItem();
     });
   }
 
-  //获取所有物资
   getItem(): void {
     this.wareHouseApiService.getItem$().subscribe((res: WarehouseItem) => {
-      console.log(res);
       if (res.graph.length > 0) {
-        // 提取物资类型
         const allGoodsSet = new Set<string>();
         res.graph.forEach((node) => {
           node.goods_list.forEach((good) => {
@@ -143,20 +222,17 @@ export class WarehouseManageComponent implements OnInit {
         });
         this.goodsHeaders = Array.from(allGoodsSet);
 
-        // 提取所有不同的地点
         this.places = res.graph.map((node) => ({
-          id: node.id, // 地点的唯一ID
-          name: node.name, // 地点名称
+          id: node.id,
+          name: node.name,
         }));
 
-        // 为了避免地点重复，可以使用一个简单的过滤机制
         this.places = this.places.filter(
           (place, index, self) =>
             index ===
             self.findIndex((p) => p.id === place.id && p.name === place.name),
         );
 
-        // 初始化物资数据列表，确保所有地点的新物资数量都被初始化为 0
         this.listOfMapData = res.graph.map((node) => {
           const goodsamount_list = this.goodsHeaders.map((good) => {
             const goodIndex = node.goods_list.indexOf(good);
@@ -168,6 +244,8 @@ export class WarehouseManageComponent implements OnInit {
             goodsamount_list,
           };
         });
+
+        this.updateChart();
       }
     });
   }
