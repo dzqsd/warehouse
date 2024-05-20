@@ -106,28 +106,43 @@ export class RoutePlaningComponent implements OnInit {
       { id: 'node14', x: 690, y: 450, label: '江苏' },
       { id: 'node15', x: 650, y: 380, label: '山东' },
       // 新增节点
+      { id: 'node16', x: 510, y: 628, label: '广西' },
+      { id: 'node17', x: 540, y: 710, label: '海南' },
+      { id: 'node18', x: 710, y: 290, label: '辽宁' },
+      { id: 'node19', x: 495, y: 575, label: '贵州' },
+      { id: 'node20', x: 670, y: 572, label: '福建' },
     ],
     edges: [
-      { source: 'node2', target: 'node3', label: 'edge 2' }, // 湖南、甘肃
-      { source: 'node3', target: 'node8', label: 'edge 3' }, // 甘肃、河南
-      { source: 'node1', target: 'node9', label: 'edge 4' }, // 台湾、广东
-      { source: 'node4', target: 'node3', label: 'edge 5' }, // 西藏、甘肃
-      { source: 'node2', target: 'node8', label: 'edge 6' }, // 湖南、河南
-      { source: 'node3', target: 'node5', label: 'edge 8' }, // 甘肃、内蒙古
-      { source: 'node4', target: 'node6', label: 'edge 9' }, // 西藏、新疆
-      { source: 'node5', target: 'node10', label: 'edge 10' }, // 内蒙古、北京
-      { source: 'node5', target: 'node6', label: 'edge 11' }, // 内蒙古、新疆
-      { source: 'node8', target: 'node10', label: 'edge 12' }, // 河南、北京
-      { source: 'node8', target: 'node9', label: 'edge 13' }, // 河南、广东
-      { source: 'node7', target: 'node10', label: 'edge 14' }, // 黑龙江、北京
-      { source: 'node2', target: 'node9', label: 'edge 15' }, // 湖南、广东
-      { source: 'node11', target: 'node12', label: 'edge 16' }, // 云南、四川
-      { source: 'node12', target: 'node3', label: 'edge 17' }, // 四川、甘肃
-      { source: 'node3', target: 'node13', label: 'edge 18' }, // 甘肃、青海
-      { source: 'node14', target: 'node8', label: 'edge 19' }, // 江苏、河南
-      { source: 'node15', target: 'node8', label: 'edge 20' }, // 山东、河南
-      { source: 'node14', target: 'node15', label: 'edge 21' }, // 江苏、山东
+      { source: 'node2', target: 'node3', label: '2' }, // 湖南、甘肃
+      { source: 'node3', target: 'node8', label: '3' }, // 甘肃、河南
+      { source: 'node1', target: 'node9', label: '4' }, // 台湾、广东
+      { source: 'node4', target: 'node3', label: '5' }, // 西藏、甘肃
+      { source: 'node2', target: 'node8', label: '6' }, // 湖南、河南
+      { source: 'node3', target: 'node5', label: '8' }, // 甘肃、内蒙古
+      { source: 'node4', target: 'node6', label: '9' }, // 西藏、新疆
+      { source: 'node5', target: 'node10', label: '10' }, // 内蒙古、北京
+      { source: 'node5', target: 'node6', label: '11' }, // 内蒙古、新疆
+      { source: 'node8', target: 'node10', label: '12' }, // 河南、北京
+      { source: 'node8', target: 'node9', label: '13' }, // 河南、广东
+      { source: 'node7', target: 'node10', label: '14' }, // 黑龙江、北京
+      { source: 'node2', target: 'node9', label: '15' }, // 湖南、广东
+      { source: 'node11', target: 'node12', label: '16' }, // 云南、四川
+      { source: 'node12', target: 'node3', label: '17' }, // 四川、甘肃
+      { source: 'node3', target: 'node13', label: '18' }, // 甘肃、青海
+      { source: 'node14', target: 'node8', label: '19' }, // 江苏、河南
+      { source: 'node15', target: 'node8', label: '20' }, // 山东、河南
+      { source: 'node14', target: 'node15', label: '21' }, // 江苏、山东
       // 新增边
+      { source: 'node10', target: 'node18', label: '22' }, // 北京、辽宁
+      { source: 'node9', target: 'node20', label: '23' }, // 广东、福建
+      { source: 'node14', target: 'node20', label: '24' }, // 江苏、福建
+      { source: 'node19', target: 'node2', label: '25' }, // 贵州、湖南
+      { source: 'node19', target: 'node11', label: '26' }, // 贵州、云南
+      { source: 'node19', target: 'node3', label: '27' }, // 贵州、甘肃
+      { source: 'node19', target: 'node16', label: '28' }, // 贵州、广西
+      { source: 'node16', target: 'node9', label: '29' }, // 广西、广东
+      { source: 'node16', target: 'node17', label: '30' }, // 广西、海南
+      { source: 'node10', target: 'node15', label: '31' }, // 北京、山东
     ],
   });
 
