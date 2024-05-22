@@ -1,7 +1,12 @@
 import { Injectable } from '@angular/core';
 import { BaseApiService } from './base-api.service';
 import { HttpClient } from '@angular/common/http';
-import { TransParams } from './interfaces/route-planing-api';
+import {
+  TransParams,
+  SupplyDemandResponse,
+  TransportResponse,
+  //SupplyDemandItem,
+} from './interfaces/route-planing-api';
 import { WarehouseItem } from './interfaces/warehouse-api';
 
 @Injectable({
@@ -24,7 +29,16 @@ export class RoutePlaningApiService {
 
   public transItemBatch$(params: TransParams[]) {
     console.log(params);
-    return this.http.post<string>(`${this.baseUrl}/test/array`, params);
+    return this.http.post<SupplyDemandResponse>(
+      `${this.baseUrl}/algorithm/add`,
+      params,
+    );
+  }
+
+  public trans$() {
+    return this.http.get<TransportResponse>(
+      `${this.baseUrl}/algorithm/resolveByTime`,
+    );
   }
 
   public getItem$() {

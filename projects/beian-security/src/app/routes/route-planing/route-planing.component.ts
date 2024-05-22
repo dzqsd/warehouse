@@ -16,10 +16,19 @@ import {
   TransParams,
   RoutePlaningApiService,
   WarehouseItem,
+  SupplyDemandResponse,
+  TransportResponse,
 } from 'beian-shared-lib';
 import { NzGridModule } from 'ng-zorro-antd/grid';
 import { NzFormModule } from 'ng-zorro-antd/form';
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
+
+interface SupplyDemandItem {
+  goodsName: string;
+  id_list: number[];
+  amount_list: number[];
+  priority_list: number[];
+}
 
 G6.registerEdge(
   'circle-running', // 自定义边类型名称
@@ -85,9 +94,20 @@ export class RoutePlaningComponent implements OnInit {
   transPlaces: number[] = []; // 多选地点
   transType: string | null = null; // 物资类型
   transQuantities: { [key: number]: number } = {}; // 每个地点对应的物资数量
-  transportRoute: string | null = '无';
   places: Place[] = []; // 存储地点和它们的 ID
   goodsHeaders: string[] = []; // 存储物资类型
+  transPriority: number | null = null;
+  transportPlan: TransParams[] = [];
+  transportPlanDisplay: {
+    place: string;
+    goodsName: string;
+    quantity: number;
+    priority: number;
+    type: string;
+  }[] = []; // 用于显示的运输计划
+  transportReady: boolean = false;
+  isTimeFirst: boolean | null = null; // 是否时间优先
+
   data$: BehaviorSubject<GraphData> = new BehaviorSubject<GraphData>({
     nodes: [
       { id: 'node1', x: 722, y: 607, label: '台湾' },
@@ -183,25 +203,76 @@ export class RoutePlaningComponent implements OnInit {
     return place ? place.name : 'Unknown';
   }
 
-  trans(): void {
-    if (!this.transPlaces.length || !this.transType) {
-      this.message.error('请选择地点和物资类型!');
+  addToPlan(): void {
+    if (
+      !this.transPlaces.length ||
+      !this.transType ||
+      !this.transPriority ||
+      this.isTimeFirst === null
+    ) {
+      this.message.error('请选择地点、物资类型、物资优先级和时间优先!');
       return;
     }
 
-    const params: TransParams[] = this.transPlaces.map((placeId) => ({
+    // 构建新的运输计划项
+    const transportPlan: TransParams[] = this.transPlaces.map((placeId) => ({
       id: placeId,
       itemName: this.transType!,
       quantity: this.transQuantities[placeId] || 0,
+      priority: this.transPriority!,
+      isTimeFirst: this.isTimeFirst!, // 确保isTimeFirst是布尔值
     }));
 
-    console.log('运输参数', params);
+    // 向后端发送运输计划
+    this.routePlaningApiService.transItemBatch$(transportPlan).subscribe(
+      (res: SupplyDemandResponse) => {
+        console.log('成功添加到运输计划', res);
+        this.message.success('成功添加到运输计划!');
 
-    this.routePlaningApiService.transItemBatch$(params).subscribe(
-      (res) => {
-        console.log('物资运输成功', res);
-        // 显示运输路线res
-        this.transportRoute = `路线:${res}`; //res中的route属性
+        // 处理后端返回的数据，更新当前运输计划显示
+        const expressList = res['supply demands:']['Express Fee First List'];
+        const timeList = res['supply demands:']['Time First List'];
+
+        this.transportPlanDisplay = [];
+
+        expressList.forEach((item: SupplyDemandItem) => {
+          item.id_list.forEach((id: number, index: number) => {
+            this.transportPlanDisplay.push({
+              place: this.getPlaceNameById(id),
+              goodsName: item.goodsName,
+              quantity: item.amount_list[index],
+              priority: item.priority_list[index],
+              type: '费用优先',
+            });
+          });
+        });
+
+        timeList.forEach((item: SupplyDemandItem) => {
+          item.id_list.forEach((id: number, index: number) => {
+            this.transportPlanDisplay.push({
+              place: this.getPlaceNameById(id),
+              goodsName: item.goodsName,
+              quantity: item.amount_list[index],
+              priority: item.priority_list[index],
+              type: '时间优先',
+            });
+          });
+        });
+      },
+      (error) => {
+        this.message.error('添加运输计划失败');
+        console.error('添加运输计划错误:', error);
+      },
+    );
+  }
+
+  trans(): void {
+    // 执行运输操作，告知后端开始运输
+    this.routePlaningApiService.trans$().subscribe(
+      (res: TransportResponse) => {
+        console.log('物资开始运输', res);
+
+        // 处理返回的运输路线
       },
       (error) => {
         this.message.error('运输请求失败');

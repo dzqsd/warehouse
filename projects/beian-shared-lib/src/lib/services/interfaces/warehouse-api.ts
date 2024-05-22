@@ -17,6 +17,7 @@ export interface GraphNode {
   to_list: number[];
   timecost_list: number[];
   expressfee_list: number[];
+  capacity_list: number[];
   goods_list: string[];
   goodsamount_list: number[];
 }
