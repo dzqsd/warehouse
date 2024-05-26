@@ -96,7 +96,7 @@ export class RoutePlaningComponent implements OnInit {
   transQuantities: { [key: number]: number } = {}; // 每个地点对应的物资数量
   places: Place[] = []; // 存储地点和它们的 ID
   goodsHeaders: string[] = []; // 存储物资类型
-  transPriority: number | null = null;
+  transPriority: number | null = null; //运输优先级
   transportPlan: TransParams[] = [];
   transportPlanDisplay: {
     place: string;
@@ -106,7 +106,7 @@ export class RoutePlaningComponent implements OnInit {
     type: string;
   }[] = []; // 用于显示的运输计划
   transportReady: boolean = false;
-  isTimeFirst: boolean | null = null; // 是否时间优先
+  isTimeFirst: boolean | null = null; // 是否时间优先,若为否，则是费用优先
 
   data$: BehaviorSubject<GraphData> = new BehaviorSubject<GraphData>({
     nodes: [
@@ -203,6 +203,7 @@ export class RoutePlaningComponent implements OnInit {
     return place ? place.name : 'Unknown';
   }
 
+  // 添加到运输计划
   addToPlan(): void {
     if (
       !this.transPlaces.length ||
@@ -220,7 +221,7 @@ export class RoutePlaningComponent implements OnInit {
       itemName: this.transType!,
       quantity: this.transQuantities[placeId] || 0,
       priority: this.transPriority!,
-      isTimeFirst: this.isTimeFirst!, // 确保isTimeFirst是布尔值
+      isTimeFirst: this.isTimeFirst!,
     }));
 
     // 向后端发送运输计划
@@ -271,7 +272,8 @@ export class RoutePlaningComponent implements OnInit {
     this.routePlaningApiService.trans$().subscribe(
       (res: TransportResponse) => {
         console.log('物资开始运输', res);
-
+        // 清空运输计划 ？
+        //this.transportPlan = [];
         // 处理返回的运输路线
       },
       (error) => {

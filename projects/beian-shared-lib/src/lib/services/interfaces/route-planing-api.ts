@@ -6,7 +6,7 @@ export interface TransParams {
   isTimeFirst: boolean;
 }
 
-//添加到计划
+//添加到计划的返回结果
 export interface SupplyDemandResponse {
   msg: string;
   state: boolean;
