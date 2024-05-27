@@ -8,13 +8,31 @@
   <p>运输物资</p>
   <nz-form [nzLayout]="'horizontal'">
     <nz-form-item>
-      <nz-form-label [nzSpan]="6">选择地点</nz-form-label>
+      <nz-form-label [nzSpan]="6">选择终点</nz-form-label>
       <nz-form-control [nzSpan]="18">
         <nz-select
           nzMode="multiple"
           [(ngModel)]="transPlaces"
           style="width: 100%"
           nzPlaceHolder="选择地点"
+        >
+          <nz-option
+            *ngFor="let place of places"
+            [nzValue]="place.id"
+            [nzLabel]="place.name"
+          ></nz-option>
+        </nz-select>
+      </nz-form-control>
+    </nz-form-item>
+
+    <nz-form-item>
+      <nz-form-label [nzSpan]="6">选择起点</nz-form-label>
+      <nz-form-control [nzSpan]="18">
+        <nz-select
+          nzMode="multiple"
+          [(ngModel)]="startPlaces"
+          style="width: 100%"
+          nzPlaceHolder="选择地点，默认为全部都可以"
         >
           <nz-option
             *ngFor="let place of places"
@@ -95,7 +113,9 @@
         >
           添加到计划
         </button>
-        <button nz-button nzType="primary" (click)="trans()">运输</button>
+        <button nz-button nzType="primary" (click)="transClick$.next(true)">
+          运输
+        </button>
       </nz-form-control>
     </nz-form-item>
   </nz-form>
@@ -117,4 +137,25 @@
 
 <nz-card>
   <app-fa-graph [data$]="data$"></app-fa-graph>
+</nz-card>
+
+<nz-card>
+  <nz-form-item>
+    <nz-select
+      style="width: 100px"
+      [ngModel]="selectGood$ | async"
+      (ngModelChange)="selectGood$.next($event)"
+    >
+      @for (selectGoodChoice of selectGoodChoices$ | async; track $index) {
+        <nz-option
+          [nzValue]="selectGoodChoice"
+          [nzLabel]="selectGoodChoice"
+        ></nz-option>
+      }
+    </nz-select>
+  </nz-form-item>
+</nz-card>
+
+<nz-card>
+  <app-fa-graph [data$]="resData$"></app-fa-graph>
 </nz-card>

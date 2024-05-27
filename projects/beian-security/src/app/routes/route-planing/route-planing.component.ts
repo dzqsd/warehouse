@@ -1,11 +1,18 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, CUSTOM_ELEMENTS_SCHEMA, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { NzCardModule } from 'ng-zorro-antd/card';
 import { NzPageHeaderModule } from 'ng-zorro-antd/page-header';
 import { FaGraphComponent } from '../fa-graph/fa-graph.component';
-import { BehaviorSubject } from 'rxjs';
-import { GraphData } from '@antv/g6';
-import G6 from '@antv/g6';
+import {
+  BehaviorSubject,
+  combineLatest,
+  filter,
+  map,
+  ReplaySubject,
+  shareReplay,
+  switchMap,
+} from 'rxjs';
+import { EdgeConfig, GraphData } from '@antv/g6';
 import { NzSelectModule } from 'ng-zorro-antd/select';
 import { FormsModule } from '@angular/forms';
 import { NzButtonModule } from 'ng-zorro-antd/button';
@@ -13,15 +20,14 @@ import { NzInputNumberModule } from 'ng-zorro-antd/input-number';
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { HttpClient } from '@angular/common/http';
 import {
-  TransParams,
   RoutePlaningApiService,
-  WarehouseItem,
   SupplyDemandResponse,
-  TransportResponse,
+  TransParams,
+  TransRoute,
+  WarehouseItem,
 } from 'beian-shared-lib';
 import { NzGridModule } from 'ng-zorro-antd/grid';
 import { NzFormModule } from 'ng-zorro-antd/form';
-import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 
 interface SupplyDemandItem {
   goodsName: string;
@@ -29,42 +35,6 @@ interface SupplyDemandItem {
   amount_list: number[];
   priority_list: number[];
 }
-
-G6.registerEdge(
-  'circle-running', // 自定义边类型名称
-  {
-    afterDraw(cfg, group) {
-      if (group == null) return;
-      const shape = group.get('children')[0];
-      const startPoint = shape.getPoint(0);
-      const circle = group.addShape('circle', {
-        attrs: {
-          x: startPoint.x,
-          y: startPoint.y,
-          fill: '#FF6A00', // 圆形颜色
-          r: 5, // 圆形半径
-        },
-        name: 'circle-shape', // 圆形形状名称
-      });
-
-      circle.animate(
-        (ratio: number) => {
-          const tmpPoint = shape.getPoint(ratio);
-          // 返回圆形的位置
-          return {
-            x: tmpPoint.x,
-            y: tmpPoint.y,
-          };
-        },
-        {
-          repeat: true, // 是否重复执行动画
-          duration: 3000, // 动画持续时间
-        },
-      );
-    },
-  },
-  'cubic', // 继承默认的曲线边类型
-);
 
 interface Place {
   id: number;
@@ -92,6 +62,7 @@ interface Place {
 })
 export class RoutePlaningComponent implements OnInit {
   transPlaces: number[] = []; // 多选地点
+  startPlaces: number[] = [];
   transType: string | null = null; // 物资类型
   transQuantities: { [key: number]: number } = {}; // 每个地点对应的物资数量
   places: Place[] = []; // 存储地点和它们的 ID
@@ -108,30 +79,32 @@ export class RoutePlaningComponent implements OnInit {
   transportReady: boolean = false;
   isTimeFirst: boolean | null = null; // 是否时间优先,若为否，则是费用优先
 
-  data$: BehaviorSubject<GraphData> = new BehaviorSubject<GraphData>({
-    nodes: [
-      { id: 'node1', x: 722, y: 607, label: '台湾' },
-      { id: 'node2', x: 560, y: 534, label: '湖南' },
-      { id: 'node3', x: 455, y: 430, label: '甘肃' },
-      { id: 'node4', x: 258, y: 493, label: '西藏' },
-      { id: 'node5', x: 523, y: 301, label: '内蒙古' },
-      { id: 'node6', x: 223, y: 264, label: '新疆' },
-      { id: 'node7', x: 730, y: 177, label: '黑龙江' },
-      { id: 'node8', x: 584, y: 439, label: '河南' },
-      { id: 'node9', x: 592, y: 623, label: '广东' },
-      { id: 'node10', x: 618, y: 318, label: '北京' },
-      { id: 'node11', x: 380, y: 600, label: '云南' },
-      { id: 'node12', x: 400, y: 510, label: '四川' },
-      { id: 'node13', x: 320, y: 400, label: '青海' },
-      { id: 'node14', x: 690, y: 450, label: '江苏' },
-      { id: 'node15', x: 650, y: 380, label: '山东' },
-      // 新增节点
-      { id: 'node16', x: 510, y: 628, label: '广西' },
-      { id: 'node17', x: 540, y: 710, label: '海南' },
-      { id: 'node18', x: 710, y: 290, label: '辽宁' },
-      { id: 'node19', x: 495, y: 575, label: '贵州' },
-      { id: 'node20', x: 670, y: 572, label: '福建' },
-    ],
+  baseNode = [
+    { id: 'node1', x: 722, y: 607, label: '台湾' },
+    { id: 'node2', x: 560, y: 534, label: '湖南' },
+    { id: 'node3', x: 455, y: 430, label: '甘肃' },
+    { id: 'node4', x: 258, y: 493, label: '西藏' },
+    { id: 'node5', x: 523, y: 301, label: '内蒙古' },
+    { id: 'node6', x: 223, y: 264, label: '新疆' },
+    { id: 'node7', x: 730, y: 177, label: '黑龙江' },
+    { id: 'node8', x: 584, y: 439, label: '河南' },
+    { id: 'node9', x: 592, y: 623, label: '广东' },
+    { id: 'node10', x: 618, y: 318, label: '北京' },
+    { id: 'node11', x: 380, y: 600, label: '云南' },
+    { id: 'node12', x: 400, y: 510, label: '四川' },
+    { id: 'node13', x: 320, y: 400, label: '青海' },
+    { id: 'node14', x: 690, y: 450, label: '江苏' },
+    { id: 'node15', x: 650, y: 380, label: '山东' },
+    // 新增节点
+    { id: 'node16', x: 510, y: 628, label: '广西' },
+    { id: 'node17', x: 540, y: 710, label: '海南' },
+    { id: 'node18', x: 710, y: 290, label: '辽宁' },
+    { id: 'node19', x: 495, y: 575, label: '贵州' },
+    { id: 'node20', x: 670, y: 572, label: '福建' },
+  ];
+
+  baseGraph: GraphData = {
+    nodes: this.baseNode,
     edges: [
       { source: 'node2', target: 'node3', label: '2' }, // 湖南、甘肃
       { source: 'node3', target: 'node8', label: '3' }, // 甘肃、河南
@@ -164,8 +137,83 @@ export class RoutePlaningComponent implements OnInit {
       { source: 'node16', target: 'node17', label: '30' }, // 广西、海南
       { source: 'node10', target: 'node15', label: '31' }, // 北京、山东
     ],
-  });
+  };
 
+  data$: BehaviorSubject<GraphData> = new BehaviorSubject<GraphData>(
+    this.baseGraph,
+  );
+
+  transClick$: ReplaySubject<boolean> = new ReplaySubject<boolean>(1);
+
+  trans$ = this.transClick$.pipe(
+    switchMap(() => {
+      return this.routePlaningApiService.trans$();
+    }),
+    shareReplay(1),
+  );
+
+  selectGoodChoices$ = this.trans$.pipe(
+    map((trans) => {
+      return trans.result.map((transRoute: TransRoute) => {
+        return transRoute.name;
+      });
+    }),
+  );
+
+  selectGood$: ReplaySubject<string> = new ReplaySubject(1);
+
+  resData$ = combineLatest([this.trans$, this.selectGood$]).pipe(
+    map(([trans, selectGood]) => {
+      for (const transRoute of trans.result) {
+        if (transRoute.name == selectGood) {
+          return transRoute;
+        }
+      }
+      return null;
+    }),
+    filter((res): res is TransRoute => {
+      return res != null;
+    }),
+    map((transRoute) => {
+      const resEdges: EdgeConfig[] = [];
+      const coordinates: Set<string> = new Set();
+
+      function hash(u: number, v: number) {
+        return JSON.stringify({ u: u, v: v });
+      }
+
+      for (const edge of transRoute.edges) {
+        if (edge.flow != 0) {
+          coordinates.add(hash(edge.u, edge.v));
+          if (coordinates.has(hash(edge.v, edge.u))) {
+            coordinates.delete(hash(edge.v, edge.u));
+          }
+        } else {
+          if (!coordinates.has(hash(edge.v, edge.u))) {
+            coordinates.add(hash(edge.u, edge.v));
+          }
+        }
+      }
+
+      for (const edge of transRoute.edges) {
+        if (coordinates.has(hash(edge.u, edge.v))) {
+          resEdges.push({
+            source: 'node' + edge.u.toString(),
+            target: 'node' + edge.v.toString(),
+            label: edge.flow != 0 ? edge.flow.toString() : undefined,
+            type: edge.flow != 0 ? 'arrow-running' : undefined,
+          });
+        }
+      }
+
+      return {
+        nodes: this.baseNode,
+        edges: resEdges,
+      };
+    }),
+  );
+
+  // , type: 'arrow-running'
   constructor(
     private message: NzMessageService,
     private http: HttpClient,
@@ -218,6 +266,7 @@ export class RoutePlaningComponent implements OnInit {
     // 构建新的运输计划项
     const transportPlan: TransParams[] = this.transPlaces.map((placeId) => ({
       id: placeId,
+      startPlaces: this.startPlaces,
       itemName: this.transType!,
       quantity: this.transQuantities[placeId] || 0,
       priority: this.transPriority!,
@@ -225,14 +274,15 @@ export class RoutePlaningComponent implements OnInit {
     }));
 
     // 向后端发送运输计划
-    this.routePlaningApiService.transItemBatch$(transportPlan).subscribe(
-      (res: SupplyDemandResponse) => {
+    this.routePlaningApiService
+      .transItemBatch$(transportPlan)
+      .subscribe((res: SupplyDemandResponse) => {
         console.log('成功添加到运输计划', res);
         this.message.success('成功添加到运输计划!');
 
         // 处理后端返回的数据，更新当前运输计划显示
-        const expressList = res['supply demands:']['Express Fee First List'];
-        const timeList = res['supply demands:']['Time First List'];
+        const expressList = res['supply demands']['Express Fee First List'];
+        const timeList = res['supply demands']['Time First List'];
 
         this.transportPlanDisplay = [];
 
@@ -259,27 +309,6 @@ export class RoutePlaningComponent implements OnInit {
             });
           });
         });
-      },
-      (error) => {
-        this.message.error('添加运输计划失败');
-        console.error('添加运输计划错误:', error);
-      },
-    );
-  }
-
-  trans(): void {
-    // 执行运输操作，告知后端开始运输
-    this.routePlaningApiService.trans$().subscribe(
-      (res: TransportResponse) => {
-        console.log('物资开始运输', res);
-        // 清空运输计划 ？
-        //this.transportPlan = [];
-        // 处理返回的运输路线
-      },
-      (error) => {
-        this.message.error('运输请求失败');
-        console.error('运输错误:', error);
-      },
-    );
+      });
   }
 }

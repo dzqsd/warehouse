@@ -1,5 +1,6 @@
 export interface TransParams {
   id: number;
+  startPlaces: number[];
   itemName: string;
   quantity: number;
   priority: number;
@@ -10,7 +11,7 @@ export interface TransParams {
 export interface SupplyDemandResponse {
   msg: string;
   state: boolean;
-  'supply demands:': {
+  'supply demands': {
     'Express Fee First List': SupplyDemandItem[];
     'Time First List': SupplyDemandItem[];
   };
@@ -35,6 +36,8 @@ export interface Edge {
 export interface TransRoute {
   cost: number;
   edges: Edge[];
+  name: string;
+  isTimeFirst: boolean;
 }
 
 export interface TransportResponse {
