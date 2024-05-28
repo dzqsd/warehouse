@@ -21,20 +21,19 @@ import { NzMessageService } from 'ng-zorro-antd/message';
 import { HttpClient } from '@angular/common/http';
 import {
   RoutePlaningApiService,
-  SupplyDemandResponse,
   TransParams,
   TransRoute,
   WarehouseItem,
 } from 'beian-shared-lib';
 import { NzGridModule } from 'ng-zorro-antd/grid';
 import { NzFormModule } from 'ng-zorro-antd/form';
-
-interface SupplyDemandItem {
-  goodsName: string;
-  id_list: number[];
-  amount_list: number[];
-  priority_list: number[];
-}
+import { NzTableModule } from 'ng-zorro-antd/table';
+// interface SupplyDemandItem {
+//   goodsName: string;
+//   id_list: number[];
+//   amount_list: number[];
+//   priority_list: number[];
+// }
 
 interface Place {
   id: number;
@@ -57,24 +56,24 @@ interface Place {
     NzInputNumberModule,
     NzGridModule,
     NzFormModule,
+    NzTableModule,
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })
 export class RoutePlaningComponent implements OnInit {
-  transPlaces: number[] = []; // 多选地点
+  endPlaces: number[] = []; // 多选地点
   startPlaces: number[] = [];
-  transType: string | null = null; // 物资类型
+  itemName: string | null = null; // 物资类型
   transQuantities: { [key: number]: number } = {}; // 每个地点对应的物资数量
   places: Place[] = []; // 存储地点和它们的 ID
   goodsHeaders: string[] = []; // 存储物资类型
   transPriority: number | null = null; //运输优先级
   transportPlan: TransParams[] = [];
   transportPlanDisplay: {
-    place: string;
-    goodsName: string;
-    quantity: number;
-    priority: number;
-    type: string;
+    startPlaces: string;
+    endPlace: string;
+    itemName: string;
+    quantity: string;
   }[] = []; // 用于显示的运输计划
   transportReady: boolean = false;
   isTimeFirst: boolean | null = null; // 是否时间优先,若为否，则是费用优先
@@ -147,7 +146,7 @@ export class RoutePlaningComponent implements OnInit {
 
   trans$ = this.transClick$.pipe(
     switchMap(() => {
-      return this.routePlaningApiService.trans$();
+      return this.routePlaningApiService.trans$(this.transportPlan);
     }),
     shareReplay(1),
   );
@@ -258,62 +257,38 @@ export class RoutePlaningComponent implements OnInit {
 
   // 添加到运输计划
   addToPlan(): void {
-    if (
-      !this.transPlaces.length ||
-      !this.transType ||
-      !this.transPriority ||
-      this.isTimeFirst === null
-    ) {
+    if (!this.endPlaces.length || !this.itemName) {
       this.message.error('请选择地点、物资类型、物资优先级和时间优先!');
       return;
     }
 
     // 构建新的运输计划项
-    const transportPlan: TransParams[] = this.transPlaces.map((placeId) => ({
-      id: placeId,
+    this.transportPlan.push({
       startPlaces: this.startPlaces,
-      itemName: this.transType!,
-      quantity: this.transQuantities[placeId] || 0,
-      priority: this.transPriority!,
-      isTimeFirst: this.isTimeFirst!,
-    }));
+      endPlaces: this.endPlaces,
+      itemName: this.itemName,
+      quantity: this.endPlaces.map((id) => this.transQuantities[id]),
+    });
 
-    // 向后端发送运输计划
-    this.routePlaningApiService
-      .transItemBatch$(transportPlan)
-      .subscribe((res: SupplyDemandResponse) => {
-        console.log('成功添加到运输计划', res);
-        this.message.success('成功添加到运输计划!');
+    this.transportPlanDisplay = [];
 
-        // 处理后端返回的数据，更新当前运输计划显示
-        const expressList = res['supply demands']['Express Fee First List'];
-        const timeList = res['supply demands']['Time First List'];
-
-        this.transportPlanDisplay = [];
-
-        expressList.forEach((item: SupplyDemandItem) => {
-          item.id_list.forEach((id: number, index: number) => {
-            this.transportPlanDisplay.push({
-              place: this.getPlaceNameById(id),
-              goodsName: item.goodsName,
-              quantity: item.amount_list[index],
-              priority: item.priority_list[index],
-              type: '费用优先',
-            });
-          });
+    for (const plan of this.transportPlan) {
+      for (let i = 0; i < plan.endPlaces.length; i++) {
+        this.transportPlanDisplay.push({
+          startPlaces: plan.startPlaces
+            .map((id) => this.getPlaceNameById(id))
+            .join(', '),
+          endPlace: this.getPlaceNameById(plan.endPlaces[i]),
+          itemName: plan.itemName,
+          quantity: plan.quantity[i].toString(),
         });
+      }
+    }
+  }
 
-        timeList.forEach((item: SupplyDemandItem) => {
-          item.id_list.forEach((id: number, index: number) => {
-            this.transportPlanDisplay.push({
-              place: this.getPlaceNameById(id),
-              goodsName: item.goodsName,
-              quantity: item.amount_list[index],
-              priority: item.priority_list[index],
-              type: '时间优先',
-            });
-          });
-        });
-      });
+  //清空运输计划
+  clearPlan(): void {
+    this.transportPlan = [];
+    this.transportPlanDisplay = [];
   }
 }

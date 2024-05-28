@@ -1,10 +1,8 @@
 export interface TransParams {
-  id: number;
+  endPlaces: number[];
   startPlaces: number[];
   itemName: string;
-  quantity: number;
-  priority: number;
-  isTimeFirst: boolean;
+  quantity: number[];
 }
 
 //添加到计划的返回结果

@@ -3,7 +3,6 @@ import { BaseApiService } from './base-api.service';
 import { HttpClient } from '@angular/common/http';
 import {
   TransParams,
-  SupplyDemandResponse,
   TransportResponse,
   //SupplyDemandItem,
 } from './interfaces/route-planing-api';
@@ -22,22 +21,10 @@ export class RoutePlaningApiService {
     return this.baseApiService.baseUrl;
   }
 
-  public transItem$(params: TransParams) {
-    console.log(params);
-    return this.http.post<TransParams>(`${this.baseUrl}/trans`, params);
-  }
-
-  public transItemBatch$(params: TransParams[]) {
-    console.log(params);
-    return this.http.post<SupplyDemandResponse>(
-      `${this.baseUrl}/algorithm/add`,
+  public trans$(params: TransParams[]) {
+    return this.http.post<TransportResponse>(
+      `${this.baseUrl}/algorithm/generatePathPlan`,
       params,
-    );
-  }
-
-  public trans$() {
-    return this.http.get<TransportResponse>(
-      `${this.baseUrl}/algorithm/resolveByTime`,
     );
   }
 
