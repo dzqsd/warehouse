@@ -73,12 +73,12 @@
     </nz-form-item>
 
     <nz-form-item>
-      <nz-form-label [nzSpan]="6">时间优先</nz-form-label>
+      <nz-form-label [nzSpan]="6">应急预案</nz-form-label>
       <nz-form-control [nzSpan]="18">
         <nz-select
           [(ngModel)]="isTimeFirst"
           style="width: 100%"
-          nzPlaceHolder="选择时间优先"
+          nzPlaceHolder="选择是否为应急预案"
         >
           <nz-option nzValue="true" nzLabel="是"></nz-option>
           <nz-option nzValue="false" nzLabel="否"></nz-option>
@@ -132,14 +132,11 @@
 </nz-card>
 
 <nz-card>
-  <p>运输路线规划</p>
-</nz-card>
-
-<nz-card>
   <app-fa-graph [data$]="data$"></app-fa-graph>
 </nz-card>
 
 <nz-card>
+  <p>运输路线规划</p>
   <nz-form-item>
     <nz-select
       style="width: 100px"
