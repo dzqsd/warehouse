@@ -228,7 +228,12 @@ export class RoutePlaningComponent implements OnInit {
     this.routePlaningApiService.getItem$().subscribe((res: WarehouseItem) => {
       if (res.graph.length > 0) {
         // 提取物资类型
-        this.goodsHeaders = res.graph[0].goods_list;
+        this.goodsHeaders = res.graph.flatMap((node) =>
+          node.goodsList.map((good) => good.name),
+        );
+
+        // 去重物资类型
+        this.goodsHeaders = Array.from(new Set(this.goodsHeaders));
 
         // 提取所有不同的地点
         this.places = res.graph.map((node) => ({

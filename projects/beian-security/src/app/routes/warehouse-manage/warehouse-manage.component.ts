@@ -215,28 +215,33 @@ export class WarehouseManageComponent implements OnInit, AfterViewInit {
     this.wareHouseApiService.getItem$().subscribe((res: WarehouseItem) => {
       if (res.graph.length > 0) {
         const allGoodsSet = new Set<string>();
+
+        // 遍历节点，收集所有物资种类
         res.graph.forEach((node) => {
-          node.goods_list.forEach((good) => {
-            allGoodsSet.add(good);
+          node.goodsList.forEach((good) => {
+            allGoodsSet.add(good.name);
           });
         });
         this.goodsHeaders = Array.from(allGoodsSet);
 
+        // 处理地点信息
         this.places = res.graph.map((node) => ({
           id: node.id,
           name: node.name,
         }));
 
+        // 去重
         this.places = this.places.filter(
           (place, index, self) =>
             index ===
             self.findIndex((p) => p.id === place.id && p.name === place.name),
         );
 
+        // 处理每个地点的物资数量信息
         this.listOfMapData = res.graph.map((node) => {
           const goodsamount_list = this.goodsHeaders.map((good) => {
-            const goodIndex = node.goods_list.indexOf(good);
-            return goodIndex !== -1 ? node.goodsamount_list[goodIndex] : 0;
+            const goodItem = node.goodsList.find((item) => item.name === good);
+            return goodItem ? goodItem.amount : 0;
           });
           return {
             id: node.id,
