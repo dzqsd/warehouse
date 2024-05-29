@@ -81,7 +81,11 @@
           nz-button
           nzType="primary"
           (click)="addToPlan()"
-          [disabled]="!endPlaces.length || !itemName"
+          [disabled]="
+            !endPlaces.length ||
+            !itemName ||
+            endPlaces.length !== tobject.keys(transQuantities).length
+          "
         >
           添加到计划
         </button>
@@ -124,6 +128,27 @@
 
 <nz-card>
   <app-fa-graph [data$]="data$"></app-fa-graph>
+</nz-card>
+
+<nz-card
+  ><nz-table nzTemplateMode>
+    <thead>
+      <tr>
+        <th>所需物资类型</th>
+        <th>起点</th>
+        <th>终点</th>
+        <th>运输量</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let data of transportResultDisplay$ | async">
+        <td>{{ data.itemName }}</td>
+        <td>{{ data.startPlaces }}</td>
+        <td>{{ data.endPlace }}</td>
+        <td>{{ data.quantity }}</td>
+      </tr>
+    </tbody>
+  </nz-table>
 </nz-card>
 
 <nz-card>

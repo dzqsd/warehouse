@@ -1,1 +1,78 @@
-<p>resource-supply works!</p>
+<nz-page-header nzTitle="资源补给" [nzGhost]="false"></nz-page-header>
+
+<nz-card>
+  容量
+  <app-fa-graph [data$]="capacityData$"></app-fa-graph>
+</nz-card>
+
+@if (transportResultDisplay$ | async; as data) {
+  <nz-card
+    ><nz-table #expandTable [nzData]="data" nzTableLayout="fixed">
+      <thead>
+        <tr>
+          <th>物资类型</th>
+          <th>起点</th>
+          <th>终点</th>
+          <th>运输量</th>
+          <th>开始时间</th>
+          <th>结束时间</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let data of expandTable.data">
+          <td>{{ data.itemName }}</td>
+          <td>{{ data.startPlaces }}</td>
+          <td>{{ data.endPlace }}</td>
+          <td>{{ data.quantity }}</td>
+          <td>{{ data.startTime }}</td>
+          <td>{{ data.endTime }}</td>
+        </tr>
+      </tbody>
+    </nz-table>
+  </nz-card>
+}
+
+<nz-card>
+  <p>运输路线规划</p>
+  <nz-form-item>
+    <nz-select
+      style="width: 100px"
+      [ngModel]="selectGood$ | async"
+      (ngModelChange)="selectGood$.next($event)"
+    >
+      @for (selectGoodChoice of selectGoodChoices$ | async; track $index) {
+        <nz-option
+          [nzValue]="selectGoodChoice"
+          [nzLabel]="selectGoodChoice"
+        ></nz-option>
+      }
+    </nz-select>
+  </nz-form-item>
+
+  @if (maxTime$ | async; as maxTime) {
+    <p>时间</p>
+    <nz-row>
+      <nz-col nzSpan="12">
+        <nz-slider
+          [nzMin]="0"
+          [nzMax]="maxTime"
+          [ngModel]="selectTime$ | async"
+          (ngModelChange)="selectTime$.next($event)"
+        ></nz-slider>
+      </nz-col>
+      <div nz-col nzSpan="4">
+        <nz-input-number
+          [nzMin]="0"
+          [nzMax]="maxTime"
+          [ngStyle]="{ marginLeft: '16px' }"
+          [ngModel]="selectTime$ | async"
+          (ngModelChange)="selectTime$.next($event)"
+        ></nz-input-number>
+      </div>
+    </nz-row>
+  }
+</nz-card>
+
+<nz-card>
+  <app-fa-graph [data$]="resData$"></app-fa-graph>
+</nz-card>

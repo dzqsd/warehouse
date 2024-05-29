@@ -13,14 +13,14 @@ export class MenusService {
   constructor(private userService: UserService) {}
 
   private _menus$ = new BehaviorSubject<Menus>([
-    {
-      level: 1,
-      title: '首页',
-      icon: 'dashboard',
-      selected: true,
-      disabled: false,
-      //routerLink: ['service-center', 'dashboard'],
-    },
+    // {
+    //   level: 1,
+    //   title: '首页',
+    //   icon: 'dashboard',
+    //   selected: true,
+    //   disabled: false,
+    //   //routerLink: ['service-center', 'dashboard'],
+    // },
 
     {
       level: 1,

@@ -8,6 +8,7 @@ import {
   combineLatest,
   filter,
   map,
+  Observable,
   ReplaySubject,
   shareReplay,
   switchMap,
@@ -61,10 +62,12 @@ interface Place {
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })
 export class RoutePlaningComponent implements OnInit {
-  endPlaces: number[] = []; // 多选地点
-  startPlaces: number[] = [];
+  tobject = Object;
+
+  endPlaces: number[] = []; // 多选终点
+  startPlaces: number[] = []; // 多选起点
   itemName: string | null = null; // 物资类型
-  transQuantities: { [key: number]: number } = {}; // 每个地点对应的物资数量
+  transQuantities: { [key: number]: number | undefined } = {}; // 每个地点对应的物资数量
   places: Place[] = []; // 存储地点和它们的 ID
   goodsHeaders: string[] = []; // 存储物资类型
   transPriority: number | null = null; //运输优先级
@@ -75,8 +78,6 @@ export class RoutePlaningComponent implements OnInit {
     itemName: string;
     quantity: string;
   }[] = []; // 用于显示的运输计划
-  transportReady: boolean = false;
-  isTimeFirst: boolean | null = null; // 是否时间优先,若为否，则是费用优先
 
   baseNode = [
     { id: 'node1', x: 722, y: 607, label: '台湾' },
@@ -151,6 +152,33 @@ export class RoutePlaningComponent implements OnInit {
     shareReplay(1),
   );
 
+  transportResultDisplay$: Observable<
+    {
+      startPlaces: string;
+      endPlace: string;
+      itemName: string;
+      quantity: string;
+    }[]
+  > = this.trans$.pipe(
+    map((trans) => {
+      return trans.result.flatMap((transRoute: TransRoute) => {
+        return transRoute.edges
+          .map((edge) => {
+            return {
+              startPlaces: this.getPlaceNameById(edge.u),
+              endPlace: this.getPlaceNameById(edge.v),
+              itemName: transRoute.name,
+              quantity: edge.flow.toString(),
+            };
+          })
+          .filter((row) => {
+            return row.quantity !== '0';
+          });
+      });
+    }),
+  );
+
+  // 选择物资查看路线
   selectGoodChoices$ = this.trans$.pipe(
     map((trans) => {
       return trans.result.map((transRoute: TransRoute) => {
@@ -257,17 +285,12 @@ export class RoutePlaningComponent implements OnInit {
 
   // 添加到运输计划
   addToPlan(): void {
-    if (!this.endPlaces.length || !this.itemName) {
-      this.message.error('请选择地点、物资类型、物资优先级和时间优先!');
-      return;
-    }
-
     // 构建新的运输计划项
     this.transportPlan.push({
       startPlaces: this.startPlaces,
       endPlaces: this.endPlaces,
-      itemName: this.itemName,
-      quantity: this.endPlaces.map((id) => this.transQuantities[id]),
+      itemName: this.itemName!,
+      quantity: this.endPlaces.map((id) => this.transQuantities[id]!),
     });
 
     this.transportPlanDisplay = [];
@@ -290,5 +313,6 @@ export class RoutePlaningComponent implements OnInit {
   clearPlan(): void {
     this.transportPlan = [];
     this.transportPlanDisplay = [];
+    this.transQuantities = {};
   }
 }

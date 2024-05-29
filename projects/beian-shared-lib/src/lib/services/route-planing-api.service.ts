@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { BaseApiService } from './base-api.service';
 import { HttpClient } from '@angular/common/http';
 import {
+  SupplyPlanResponse,
   TransParams,
   TransportResponse,
   //SupplyDemandItem,
@@ -30,5 +31,11 @@ export class RoutePlaningApiService {
 
   public getItem$() {
     return this.http.get<WarehouseItem>(`${this.baseUrl}/graph/all`);
+  }
+
+  public getSupply() {
+    return this.http.get<SupplyPlanResponse>(
+      `${this.baseUrl}/algorithm/generatePlan`,
+    );
   }
 }

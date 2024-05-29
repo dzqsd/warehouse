@@ -1,3 +1,5 @@
+import { GraphNode } from './warehouse-api';
+
 export interface TransParams {
   endPlaces: number[];
   startPlaces: number[];
@@ -35,11 +37,26 @@ export interface TransRoute {
   cost: number;
   edges: Edge[];
   name: string;
-  isTimeFirst: boolean;
 }
 
 export interface TransportResponse {
   msg: string;
   state: boolean;
   result: TransRoute[];
+}
+
+export interface SupplyTransportEdge {
+  startTime: number;
+  endTime: number;
+  startId: number;
+  endId: number;
+  goodsName: string;
+  goodsAmount: number;
+}
+
+export interface SupplyPlanResponse {
+  msg: string;
+  state: boolean;
+  transportPlan: SupplyTransportEdge[];
+  graph: GraphNode[];
 }
