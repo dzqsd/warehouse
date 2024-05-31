@@ -60,3 +60,10 @@ export interface SupplyPlanResponse {
   transportPlan: SupplyTransportEdge[];
   graph: GraphNode[];
 }
+
+// 应急运输
+export interface EmergencyRequest {
+  id: number;
+  quantity: number;
+  itemName: string;
+}

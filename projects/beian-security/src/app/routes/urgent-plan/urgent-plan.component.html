@@ -1,1 +1,135 @@
-<p>urgent-plan works!</p>
+<nz-page-header
+  nzTitle="应急处理预案"
+  nzSubtitle="运输路线"
+  [nzGhost]="false"
+></nz-page-header>
+
+<nz-card>
+  <p>紧急运输</p>
+  <nz-form [nzLayout]="'horizontal'">
+    <nz-form-item>
+      <nz-form-label [nzSpan]="6">选择地点</nz-form-label>
+      <nz-form-control [nzSpan]="18">
+        <nz-select
+          [(ngModel)]="endPlaces[0]"
+          style="width: 100%"
+          nzPlaceHolder="选择地点"
+        >
+          <nz-option
+            *ngFor="let place of places"
+            [nzValue]="place.id"
+            [nzLabel]="place.name"
+          ></nz-option>
+        </nz-select>
+      </nz-form-control>
+    </nz-form-item>
+
+    <nz-form-item>
+      <nz-form-label [nzSpan]="6">物资类型</nz-form-label>
+      <nz-form-control [nzSpan]="18">
+        <nz-select
+          [(ngModel)]="itemName"
+          style="width: 100%"
+          nzPlaceHolder="选择物资类型"
+        >
+          <nz-option
+            *ngFor="let good of goodsHeaders"
+            [nzValue]="good"
+            [nzLabel]="good"
+          ></nz-option>
+        </nz-select>
+      </nz-form-control>
+    </nz-form-item>
+
+    <nz-form-item *ngFor="let place of endPlaces">
+      <nz-form-label [nzSpan]="6">物资数量</nz-form-label>
+      <nz-form-control [nzSpan]="18">
+        <nz-input-number
+          [(ngModel)]="transQuantities[place]"
+          [nzMin]="1"
+          [nzStep]="1"
+          style="width: 100%"
+        ></nz-input-number>
+      </nz-form-control>
+    </nz-form-item>
+
+    <nz-form-item>
+      <nz-form-control [nzSpan]="24" class="text-right">
+        <button nz-button nzType="primary" (click)="clearPlan()">取消</button>
+        <button
+          nz-button
+          nzType="primary"
+          (click)="confirmEmergencyTrans()"
+          [disabled]="
+            !endPlaces.length ||
+            !itemName ||
+            endPlaces.length !== tobject.keys(transQuantities).length
+          "
+        >
+          确定
+        </button>
+      </nz-form-control>
+    </nz-form-item>
+  </nz-form>
+</nz-card>
+
+<nz-card>
+  <app-fa-graph [data$]="capacityData$"></app-fa-graph>
+</nz-card>
+
+@if (transportResultDisplay$ | async; as data) {
+  <nz-card
+    ><nz-table #expandTable [nzData]="data" nzTableLayout="fixed">
+      <thead>
+        <tr>
+          <th>物资类型</th>
+          <th>起点</th>
+          <th>终点</th>
+          <th>运输量</th>
+          <th>开始时间</th>
+          <th>结束时间</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let data of expandTable.data">
+          <td>{{ data.itemName }}</td>
+          <td>{{ data.startPlaces }}</td>
+          <td>{{ data.endPlace }}</td>
+          <td>{{ data.quantity }}</td>
+          <td>{{ data.startTime }}</td>
+          <td>{{ data.endTime }}</td>
+        </tr>
+      </tbody>
+    </nz-table>
+  </nz-card>
+}
+
+<nz-card>
+  <p>{{ itemName }}当前紧急运输状态</p>
+  @if (maxTime$ | async; as maxTime) {
+    <p>时间</p>
+    <nz-row>
+      <nz-col nzSpan="12">
+        <nz-slider
+          [nzMin]="0"
+          [nzMax]="maxTime"
+          [ngModel]="selectTime$ | async"
+          (ngModelChange)="selectTime$.next($event)"
+        ></nz-slider>
+      </nz-col>
+      <div nz-col nzSpan="4">
+        <nz-input-number
+          [nzMin]="0"
+          [nzMax]="maxTime"
+          [ngStyle]="{ marginLeft: '16px' }"
+          [ngModel]="selectTime$ | async"
+          (ngModelChange)="selectTime$.next($event)"
+        ></nz-input-number>
+      </div>
+    </nz-row>
+  }
+</nz-card>
+
+<nz-card>
+  <app-fa-graph [data$]="resData$"></app-fa-graph>
+</nz-card>

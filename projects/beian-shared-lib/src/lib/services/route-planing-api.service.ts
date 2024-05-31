@@ -6,6 +6,7 @@ import {
   TransParams,
   TransportResponse,
   //SupplyDemandItem,
+  EmergencyRequest,
 } from './interfaces/route-planing-api';
 import { WarehouseItem } from './interfaces/warehouse-api';
 
@@ -36,6 +37,14 @@ export class RoutePlaningApiService {
   public getSupply() {
     return this.http.get<SupplyPlanResponse>(
       `${this.baseUrl}/algorithm/generatePlan`,
+    );
+  }
+
+  // 应急运输
+  public emergencySupply$(params: EmergencyRequest) {
+    return this.http.post<SupplyPlanResponse>(
+      `${this.baseUrl}/algorithm/generateEmergencyPlan`,
+      params,
     );
   }
 }
