@@ -74,12 +74,20 @@
 </nz-card>
 
 <nz-card>
+  <h3>容量图</h3>
   <app-fa-graph [data$]="capacityData$"></app-fa-graph>
 </nz-card>
 
+<nz-card>
+  <h3>时间图</h3>
+  <app-graph2 [data$]="timeData$"></app-graph2>
+</nz-card>
+
 @if (transportResultDisplay$ | async; as data) {
-  <nz-card
-    ><nz-table #expandTable [nzData]="data" nzTableLayout="fixed">
+  <nz-card>
+    <h3>紧急运输总时间：{{ maxTime$ | async }}</h3>
+
+    <nz-table #expandTable [nzData]="data" nzTableLayout="fixed">
       <thead>
         <tr>
           <th>物资类型</th>

@@ -8,7 +8,8 @@ import {
 export interface ItemParams {
   id: number;
   itemName: string;
-  quantity: number;
+  quantity?: number;
+  threshold?: number;
 }
 
 // export interface GraphNode {

@@ -10,13 +10,19 @@ export interface LoginParams {
   password: string;
 }
 
+export enum AuthorityType {
+  ROOT = 'root',
+  ADMIN = 'admin',
+  USER = 'user',
+}
+
 export interface LoginInfo {
   state: boolean;
   msg: string;
   token: string;
   id: number;
   name: string;
-  authority: string;
+  authority: AuthorityType;
 }
 
 export interface RegistrationParams {

@@ -27,6 +27,7 @@ import { NzGridModule } from 'ng-zorro-antd/grid';
 import { NzFormModule } from 'ng-zorro-antd/form';
 import { NzTableModule } from 'ng-zorro-antd/table';
 import { NzSliderModule } from 'ng-zorro-antd/slider';
+import { Graph2Component } from '../graph2/graph2.component';
 
 interface Place {
   id: number;
@@ -41,6 +42,7 @@ interface Place {
     NzCardModule,
     NzPageHeaderModule,
     FaGraphComponent,
+    Graph2Component,
     NzSelectModule,
     FormsModule,
     NzButtonModule,
@@ -89,7 +91,7 @@ export class UrgentPlanComponent implements OnInit {
   ];
 
   SupplyPlanResponse$ = this.routePlaningApiService
-    .getSupply()
+    .getSupply1()
     .pipe(shareReplay(1));
 
   nodes$: Observable<{ id: number; name: string }[]> =
@@ -151,6 +153,22 @@ export class UrgentPlanComponent implements OnInit {
     }),
   );
 
+  timeData$: Observable<GraphData> = zip([this.nodes$, this.edges$]).pipe(
+    map(([nodes, edges]) => {
+      return {
+        nodes: this.buildNodeData(nodes),
+        edges: edges.map((edge) => {
+          return {
+            source: 'node' + edge.source.toString(),
+            target: 'node' + edge.target.toString(),
+            label: edge.time.toString(),
+            cost: edge.cost.toString(),
+          };
+        }),
+      };
+    }),
+  );
+
   transClick$: ReplaySubject<boolean> = new ReplaySubject<boolean>(1);
 
   SupplyPlanResponse2$ = this.transClick$.pipe(
@@ -181,7 +199,7 @@ export class UrgentPlanComponent implements OnInit {
             return edge.goodsName === good[0];
           })
           .map((edge) => {
-            return edge.endTime;
+            return edge.endTime - 1;
           }),
       );
     }),
@@ -202,7 +220,7 @@ export class UrgentPlanComponent implements OnInit {
         return (
           edge.goodsName === good[0] &&
           edge.startTime <= time &&
-          edge.endTime >= time
+          edge.endTime > time
         );
       });
 
@@ -220,6 +238,9 @@ export class UrgentPlanComponent implements OnInit {
           target: 'node' + edge.endId.toString(),
           label: edge.goodsAmount.toString(),
           type: 'arrow-running',
+          style: {
+            stroke: '#d4380d',
+          },
         });
       }
 

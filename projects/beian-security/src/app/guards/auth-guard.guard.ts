@@ -14,6 +14,7 @@ export const authGuardGuard: CanActivateFn = (route, state) => {
       return id != null;
     }),
     tap((can) => {
+      console.log('can', can);
       if (!can) {
         nzMessageService.create('info', '请登录');
         router.navigate(['login']);

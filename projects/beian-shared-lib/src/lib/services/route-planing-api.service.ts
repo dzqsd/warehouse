@@ -34,9 +34,15 @@ export class RoutePlaningApiService {
     return this.http.get<WarehouseItem>(`${this.baseUrl}/graph/all`);
   }
 
-  public getSupply() {
+  public getSupply1() {
     return this.http.get<SupplyPlanResponse>(
       `${this.baseUrl}/algorithm/generatePlan`,
+    );
+  }
+
+  public getSupply2() {
+    return this.http.get<SupplyPlanResponse>(
+      `${this.baseUrl}/algorithm/generateBlackHolePlan`,
     );
   }
 

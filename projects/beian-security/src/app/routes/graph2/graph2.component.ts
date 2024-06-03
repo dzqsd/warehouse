@@ -10,17 +10,18 @@ import G6, { Graph, GraphData } from '@antv/g6';
 import { NzCardModule } from 'ng-zorro-antd/card';
 import { combineLatest, Observable, ReplaySubject } from 'rxjs';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { CommonModule } from '@angular/common';
 
 const { getLabelPosition, transform } = G6.Util;
 
 @Component({
-  selector: 'app-fa-graph',
+  selector: 'app-graph2',
   standalone: true,
-  imports: [NzCardModule],
-  templateUrl: './fa-graph.component.html',
-  styleUrl: './fa-graph.component.css',
+  imports: [CommonModule, NzCardModule],
+  templateUrl: './graph2.component.html',
+  styleUrl: './graph2.component.less',
 })
-export class FaGraphComponent implements OnInit, AfterViewInit {
+export class Graph2Component implements OnInit, AfterViewInit {
   destroyRef = inject(DestroyRef);
 
   @Input({ required: true }) data$!: Observable<GraphData>;
@@ -32,7 +33,7 @@ export class FaGraphComponent implements OnInit, AfterViewInit {
     combineLatest([this.graph$, this.data$])
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe(([graph, data]) => {
-        // G6.Util.processParallelEdges(data.edges);
+        G6.Util.processParallelEdges(data.edges);
 
         const coordinates: Map<string, number> = new Map();
 
@@ -59,12 +60,6 @@ export class FaGraphComponent implements OnInit, AfterViewInit {
               coordinates.get(cur)! != 0
                 ? coordinates.get(cur)!.toString()
                 : undefined;
-
-            // if (coordinates.get(cur)! != 0) {
-            //   edge.style = {
-            //     stroke: '#f5222d',
-            //   };
-            // }
           }
         }
 
@@ -171,7 +166,7 @@ export class FaGraphComponent implements OnInit, AfterViewInit {
           radius: 10,
           offset: 30,
           endArrow: false,
-          stroke: '#389e0d',
+          stroke: '#c02615',
           /* and other styles */
           // stroke: '#F6BD16',
         },

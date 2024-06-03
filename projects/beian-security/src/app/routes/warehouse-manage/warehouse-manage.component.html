@@ -129,9 +129,55 @@
 </nz-card>
 
 <nz-card>
+  <p>修改补给线</p>
+  <div nz-row>
+    <div nz-col nzSpan="6">
+      <nz-select [(ngModel)]="linePlace" style="width: 100%">
+        <nz-option
+          *ngFor="let place of places"
+          [nzValue]="place.id"
+          [nzLabel]="place.name"
+        ></nz-option>
+      </nz-select>
+    </div>
+    <div nz-col nzSpan="6">
+      <nz-select
+        nzShowSearch
+        nzAllowClear
+        nzPlaceHolder=""
+        [(ngModel)]="lineValue"
+        style="width: 100%"
+      >
+        <nz-option
+          *ngFor="let good of goodsHeaders"
+          [nzValue]="good"
+          [nzLabel]="good"
+        ></nz-option>
+      </nz-select>
+    </div>
+    <div nz-col nzSpan="6">
+      <nz-input-number
+        [(ngModel)]="lineQuantity"
+        [nzStep]="1"
+        style="width: 100%"
+      ></nz-input-number>
+    </div>
+    <div nz-col nzSpan="6">
+      <button
+        nz-button
+        nzType="primary"
+        (click)="lineAdd(linePlace, lineValue, lineQuantity)"
+      >
+        添加
+      </button>
+    </div>
+  </div>
+</nz-card>
+
+<!-- <nz-card>
   <p>物资可视化</p>
   <button nz-button nzType="primary" (click)="getItem()">查看物资</button>
-</nz-card>
+</nz-card> -->
 
 <nz-table #expandTable [nzData]="listOfMapData" nzTableLayout="fixed">
   <thead>

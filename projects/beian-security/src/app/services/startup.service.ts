@@ -36,7 +36,7 @@ export class StartupService {
         if (!res.state) {
           return;
         }
-
+        this.userService.authority$.next(res.authority);
         this.userService.curUserId = res.id;
         this.jwtService.setToken(res.token, true);
         return;

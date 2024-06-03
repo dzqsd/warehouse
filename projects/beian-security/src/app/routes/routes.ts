@@ -3,25 +3,24 @@ import { Route } from '@angular/router';
 import { BasicLayoutComponent } from '../layout/basic-layout/basic-layout.component';
 import { LoginComponent } from './passport/login/login.component';
 
-import { ServiceCenterComponent } from './service-center/service-center.component';
-import { WelcomeComponent } from './welcome/welcome.component';
 // import { authGuardGuard } from '../guards/auth-guard.guard';
 import { RegisterComponent } from './passport/register/register.component';
 import { WarehouseManageComponent } from './warehouse-manage/warehouse-manage.component';
 import { RoutePlaningComponent } from './route-planing/route-planing.component';
 import { ResourceSupplyComponent } from './resource-supply/resource-supply.component';
 import { UrgentPlanComponent } from './urgent-plan/urgent-plan.component';
+import { authGuardGuard } from '../guards/auth-guard.guard';
 
 export default [
   {
     path: '',
     pathMatch: 'full',
-    redirectTo: 'welcome',
+    redirectTo: 'warehouse-manage',
   },
-  {
-    path: 'welcome',
-    component: WelcomeComponent,
-  },
+  // {
+  //   path: 'welcome',
+  //   component: WelcomeComponent,
+  // },
   {
     path: 'login',
     component: LoginComponent,
@@ -36,7 +35,7 @@ export default [
     data: {
       nav: 'default',
     },
-    //canActivate: [authGuardGuard],
+    canActivate: [authGuardGuard],
     children: [
       {
         path: 'warehouse-manage',
@@ -54,12 +53,12 @@ export default [
         path: 'urgent-plan',
         component: UrgentPlanComponent,
       },
-      {
-        path: 'service-center',
-        pathMatch: 'prefix',
-        component: ServiceCenterComponent,
-        loadChildren: () => import('./service-center/routes'),
-      },
+      // {
+      //   path: 'service-center',
+      //   pathMatch: 'prefix',
+      //   component: ServiceCenterComponent,
+      //   loadChildren: () => import('./service-center/routes'),
+      // },
       // {
       //   path: '',
       //   pathMatch: 'full',

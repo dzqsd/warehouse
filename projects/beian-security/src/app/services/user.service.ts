@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import {
+  AuthorityType,
   BaseApiService,
   JwtService,
   UserApiService,
@@ -44,6 +45,8 @@ export class UserService {
     }),
   );
 
+  public authority$ = new BehaviorSubject<AuthorityType | null>(null);
+
   public login$(
     username: string,
     password: string,
@@ -60,7 +63,8 @@ export class UserService {
             this.message.error('用户名或密码错误');
             return false;
           }
-
+          console.log(res);
+          this.authority$.next(res.authority);
           // 先设置token，如果先更新id，则触发请求用户信息，而此时token未设置。
           this.jwtService.setToken(res.token, rememberMe);
 
@@ -95,6 +99,7 @@ export class UserService {
   public logout() {
     this.curUserId = null;
     this.jwtService.logout();
-    this.router.navigate(['']).then();
+    console.log('logout');
+    this.router.navigate(['/login']).then();
   }
 }

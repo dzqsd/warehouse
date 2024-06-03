@@ -1,13 +1,24 @@
 <nz-page-header nzTitle="资源补给" [nzGhost]="false"></nz-page-header>
 
 <nz-card>
-  容量
-  <app-fa-graph [data$]="capacityData$"></app-fa-graph>
+  <nz-radio-group
+    [ngModel]="algo$ | async"
+    (ngModelChange)="algo$.next($event)"
+  >
+    <label nz-radio [nzValue]="1">算法1</label>
+    <label nz-radio [nzValue]="2">算法2</label>
+  </nz-radio-group>
+</nz-card>
+
+<nz-card>
+  <h3>容量图</h3>
+  <app-fa-graph [data$]="capacityData$"> </app-fa-graph>
 </nz-card>
 
 @if (transportResultDisplay$ | async; as data) {
-  <nz-card
-    ><nz-table #expandTable [nzData]="data" nzTableLayout="fixed">
+  <nz-card>
+    <h3>总费用：{{ totalCost$ | async }}</h3>
+    <nz-table #expandTable [nzData]="data" nzTableLayout="fixed">
       <thead>
         <tr>
           <th>物资类型</th>

@@ -106,36 +106,36 @@ export class RoutePlaningComponent implements OnInit {
   baseGraph: GraphData = {
     nodes: this.baseNode,
     edges: [
-      { source: 'node2', target: 'node3', label: '2' }, // 湖南、甘肃
-      { source: 'node3', target: 'node8', label: '3' }, // 甘肃、河南
-      { source: 'node1', target: 'node9', label: '4' }, // 台湾、广东
-      { source: 'node4', target: 'node3', label: '5' }, // 西藏、甘肃
-      { source: 'node2', target: 'node8', label: '6' }, // 湖南、河南
-      { source: 'node3', target: 'node5', label: '8' }, // 甘肃、内蒙古
-      { source: 'node4', target: 'node6', label: '9' }, // 西藏、新疆
-      { source: 'node5', target: 'node10', label: '10' }, // 内蒙古、北京
-      { source: 'node5', target: 'node6', label: '11' }, // 内蒙古、新疆
-      { source: 'node8', target: 'node10', label: '12' }, // 河南、北京
-      { source: 'node8', target: 'node9', label: '13' }, // 河南、广东
-      { source: 'node7', target: 'node10', label: '14' }, // 黑龙江、北京
-      { source: 'node2', target: 'node9', label: '15' }, // 湖南、广东
-      { source: 'node11', target: 'node12', label: '16' }, // 云南、四川
-      { source: 'node12', target: 'node3', label: '17' }, // 四川、甘肃
-      { source: 'node3', target: 'node13', label: '18' }, // 甘肃、青海
-      { source: 'node14', target: 'node8', label: '19' }, // 江苏、河南
-      { source: 'node15', target: 'node8', label: '20' }, // 山东、河南
-      { source: 'node14', target: 'node15', label: '21' }, // 江苏、山东
+      { source: 'node2', target: 'node3', label: '' }, // 湖南、甘肃
+      { source: 'node3', target: 'node8', label: '' }, // 甘肃、河南
+      { source: 'node1', target: 'node9', label: '' }, // 台湾、广东
+      { source: 'node4', target: 'node3', label: '' }, // 西藏、甘肃
+      { source: 'node2', target: 'node8', label: '' }, // 湖南、河南
+      { source: 'node3', target: 'node5', label: '' }, // 甘肃、内蒙古
+      { source: 'node4', target: 'node6', label: '' }, // 西藏、新疆
+      { source: 'node5', target: 'node10', label: '' }, // 内蒙古、北京
+      { source: 'node5', target: 'node6', label: '' }, // 内蒙古、新疆
+      { source: 'node8', target: 'node10', label: '' }, // 河南、北京
+      { source: 'node8', target: 'node9', label: '' }, // 河南、广东
+      { source: 'node7', target: 'node10', label: '' }, // 黑龙江、北京
+      { source: 'node2', target: 'node9', label: '' }, // 湖南、广东
+      { source: 'node11', target: 'node12', label: '' }, // 云南、四川
+      { source: 'node12', target: 'node3', label: '' }, // 四川、甘肃
+      { source: 'node3', target: 'node13', label: '' }, // 甘肃、青海
+      { source: 'node14', target: 'node8', label: '' }, // 江苏、河南
+      { source: 'node15', target: 'node8', label: '' }, // 山东、河南
+      { source: 'node14', target: 'node15', label: '' }, // 江苏、山东
       // 新增边
-      { source: 'node10', target: 'node18', label: '22' }, // 北京、辽宁
-      { source: 'node9', target: 'node20', label: '23' }, // 广东、福建
-      { source: 'node14', target: 'node20', label: '24' }, // 江苏、福建
-      { source: 'node19', target: 'node2', label: '25' }, // 贵州、湖南
-      { source: 'node19', target: 'node11', label: '26' }, // 贵州、云南
-      { source: 'node19', target: 'node3', label: '27' }, // 贵州、甘肃
-      { source: 'node19', target: 'node16', label: '28' }, // 贵州、广西
-      { source: 'node16', target: 'node9', label: '29' }, // 广西、广东
-      { source: 'node16', target: 'node17', label: '30' }, // 广西、海南
-      { source: 'node10', target: 'node15', label: '31' }, // 北京、山东
+      { source: 'node10', target: 'node18', label: '' }, // 北京、辽宁
+      { source: 'node9', target: 'node20', label: '' }, // 广东、福建
+      { source: 'node14', target: 'node20', label: '' }, // 江苏、福建
+      { source: 'node19', target: 'node2', label: '' }, // 贵州、湖南
+      { source: 'node19', target: 'node11', label: '' }, // 贵州、云南
+      { source: 'node19', target: 'node3', label: '' }, // 贵州、甘肃
+      { source: 'node19', target: 'node16', label: '' }, // 贵州、广西
+      { source: 'node16', target: 'node9', label: '' }, // 广西、广东
+      { source: 'node16', target: 'node17', label: '' }, // 广西、海南
+      { source: 'node10', target: 'node15', label: '' }, // 北京、山东
     ],
   };
 
@@ -178,6 +178,37 @@ export class RoutePlaningComponent implements OnInit {
     }),
   );
 
+  hashEdge(u: string, v: string) {
+    return JSON.stringify({ u: u, v: v });
+  }
+
+  costMap$ = this.trans$.pipe(
+    map((response) => {
+      const map: Map<string, number> = new Map();
+      for (const resultElement of response.result) {
+        for (const edge of resultElement.edges) {
+          map.set(
+            this.hashEdge(edge.u.toString(), edge.v.toString()),
+            edge.cost,
+          );
+        }
+      }
+      return map;
+    }),
+  );
+
+  totalCost$ = this.trans$.pipe(
+    map((response) => {
+      let res = 0;
+      for (const resultElement of response.result) {
+        for (const edge of resultElement.edges) {
+          res += edge.flow * edge.cost;
+        }
+      }
+      return res;
+    }),
+  );
+
   // 选择物资查看路线
   selectGoodChoices$ = this.trans$.pipe(
     map((trans) => {
@@ -189,7 +220,10 @@ export class RoutePlaningComponent implements OnInit {
 
   selectGood$: ReplaySubject<string> = new ReplaySubject(1);
 
-  resData$ = combineLatest([this.trans$, this.selectGood$]).pipe(
+  resData$: Observable<GraphData> = combineLatest([
+    this.trans$,
+    this.selectGood$,
+  ]).pipe(
     map(([trans, selectGood]) => {
       for (const transRoute of trans.result) {
         if (transRoute.name == selectGood) {
@@ -229,6 +263,12 @@ export class RoutePlaningComponent implements OnInit {
             target: 'node' + edge.v.toString(),
             label: edge.flow != 0 ? edge.flow.toString() : undefined,
             type: edge.flow != 0 ? 'arrow-running' : undefined,
+            style:
+              edge.flow != 0
+                ? {
+                    stroke: '#d4380d',
+                  }
+                : undefined,
           });
         }
       }
@@ -237,6 +277,36 @@ export class RoutePlaningComponent implements OnInit {
         nodes: this.baseNode,
         edges: resEdges,
       };
+    }),
+  );
+
+  curFlowSum$ = this.resData$.pipe(
+    map((data) => {
+      let res: number = 0;
+      for (const edge of data.edges!) {
+        if (edge.label === undefined) {
+          continue;
+        }
+        res += Number(edge.label);
+        console.log(res);
+      }
+      return res;
+    }),
+  );
+
+  curCostSum$ = combineLatest([this.resData$, this.costMap$]).pipe(
+    map(([data, costMap]) => {
+      let res: number = 0;
+      for (const edge of data.edges!) {
+        if (edge.label === undefined) {
+          continue;
+        }
+        res +=
+          costMap.get(
+            this.hashEdge(edge.source!.substring(4), edge.target!.substring(4)), // "node1234"
+          )! * Number(edge.label);
+      }
+      return res;
     }),
   );
 
@@ -307,6 +377,8 @@ export class RoutePlaningComponent implements OnInit {
         });
       }
     }
+
+    this.transQuantities = {};
   }
 
   //清空运输计划

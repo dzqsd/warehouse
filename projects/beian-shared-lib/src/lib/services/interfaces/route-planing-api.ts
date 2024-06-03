@@ -52,6 +52,7 @@ export interface SupplyTransportEdge {
   endId: number;
   goodsName: string;
   goodsAmount: number;
+  cost: number;
 }
 
 export interface SupplyPlanResponse {

@@ -54,7 +54,7 @@ export class LoginComponent implements OnInit {
       )
       .subscribe((success: boolean) => {
         if (success) {
-          this.router.navigate(['service-center', 'dashboard']).then();
+          this.router.navigate(['/']).then();
         }
       });
   }

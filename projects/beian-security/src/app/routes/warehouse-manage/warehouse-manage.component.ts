@@ -63,6 +63,10 @@ export class WarehouseManageComponent implements OnInit, AfterViewInit {
   goods: string[] = []; // 存储物资类型
   places: Place[] = []; // 存储地点和它们的 ID
 
+  linePlace: number = 0; // 地点ID
+  lineValue: string | null = null; //物资类型
+  lineQuantity: number = 0; //物资数量
+
   // 图表相关变量
   chart: Bar | null = null;
   columnChart: Column | null = null;
@@ -179,6 +183,31 @@ export class WarehouseManageComponent implements OnInit, AfterViewInit {
     }
 
     const params: ItemParams = { id, itemName, quantity };
+    this.wareHouseApiService.addItem$(params).subscribe(() => {
+      this.getItem();
+    });
+  }
+  lineAdd(
+    id: number,
+    itemName: string | null,
+    threshold: number,
+    inputElement?: HTMLInputElement,
+  ): void {
+    if (inputElement) {
+      const newGood = inputElement.value.trim();
+      if (newGood && !this.goodsHeaders.includes(newGood)) {
+        itemName = newGood;
+        this.goodsHeaders = [...this.goodsHeaders, newGood];
+        inputElement.value = '';
+      }
+    }
+
+    if (!itemName || threshold <= 0) {
+      this.message.error('物资名或数量无效!');
+      return;
+    }
+
+    const params: ItemParams = { id, itemName, threshold };
     this.wareHouseApiService.addItem$(params).subscribe(() => {
       this.getItem();
     });

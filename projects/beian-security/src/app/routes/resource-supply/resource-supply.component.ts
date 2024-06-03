@@ -13,15 +13,18 @@ import { FaGraphComponent } from '../fa-graph/fa-graph.component';
 import { NzSliderModule } from 'ng-zorro-antd/slider';
 import { RoutePlaningApiService } from 'beian-shared-lib';
 import {
-  shareReplay,
   map,
   ReplaySubject,
   combineLatest,
   zip,
   Observable,
   tap,
+  BehaviorSubject,
+  switchMap,
+  shareReplay,
 } from 'rxjs';
 import { EdgeConfig, GraphData } from '@antv/g6';
+import { NzRadioModule } from 'ng-zorro-antd/radio';
 
 @Component({
   selector: 'app-resource-supply',
@@ -41,10 +44,13 @@ import { EdgeConfig, GraphData } from '@antv/g6';
     NzFormModule,
     NzTableModule,
     NzSliderModule,
+    NzRadioModule,
   ],
 })
 export class ResourceSupplyComponent {
   constructor(private routePlanService: RoutePlaningApiService) {}
+
+  algo$ = new BehaviorSubject(1);
 
   baseNode = [
     { id: 'node1', x: 722, y: 607, label: '台湾' },
@@ -70,10 +76,23 @@ export class ResourceSupplyComponent {
     { id: 'node20', x: 670, y: 572, label: '福建' },
   ];
 
-  SupplyPlanResponse$ = this.routePlanService.getSupply().pipe(shareReplay(1));
+  supplyPlanResponse$ = this.algo$.pipe(
+    switchMap((algo) => {
+      switch (algo) {
+        case 1:
+          return this.routePlanService.getSupply1();
+        case 2:
+          return this.routePlanService.getSupply2();
+      }
+      throw `不存在该算法：${algo}`;
+    }),
+    shareReplay(1),
+  );
+
+  // supplyPlanResponse$ = this.routePlanService.getSupply().pipe(shareReplay(1));
 
   nodes$: Observable<{ id: number; name: string }[]> =
-    this.SupplyPlanResponse$.pipe(
+    this.supplyPlanResponse$.pipe(
       map((response) => {
         return response.graph.map((node) => {
           return {
@@ -84,7 +103,7 @@ export class ResourceSupplyComponent {
       }),
     );
 
-  edges$ = this.SupplyPlanResponse$.pipe(
+  edges$ = this.supplyPlanResponse$.pipe(
     map((response) => {
       return response.graph.flatMap((node) => {
         return node.edgeCostList.map((edge) => {
@@ -100,7 +119,17 @@ export class ResourceSupplyComponent {
     }),
   );
 
-  selectGoodChoices$ = this.SupplyPlanResponse$.pipe(
+  totalCost$ = this.supplyPlanResponse$.pipe(
+    map((response) => {
+      let res = 0;
+      for (const plan of response.transportPlan) {
+        res += plan.cost;
+      }
+      return res;
+    }),
+  );
+
+  selectGoodChoices$ = this.supplyPlanResponse$.pipe(
     map((response) => {
       return response.transportPlan.map((plan) => {
         return plan.goodsName;
@@ -159,7 +188,7 @@ export class ResourceSupplyComponent {
       startTime: string;
       endTime: string;
     }[]
-  > = this.SupplyPlanResponse$.pipe(
+  > = this.supplyPlanResponse$.pipe(
     map((response) => {
       return response.transportPlan.map((edge) => {
         return {
@@ -174,7 +203,7 @@ export class ResourceSupplyComponent {
     }),
   );
 
-  maxTime$ = combineLatest([this.SupplyPlanResponse$, this.selectGood$]).pipe(
+  maxTime$ = combineLatest([this.supplyPlanResponse$, this.selectGood$]).pipe(
     map(([response, good]) => {
       return Math.max(
         ...response.transportPlan
@@ -182,7 +211,7 @@ export class ResourceSupplyComponent {
             return edge.goodsName === good;
           })
           .map((edge) => {
-            return edge.endTime;
+            return edge.endTime - 1;
           }),
       );
     }),
@@ -194,7 +223,7 @@ export class ResourceSupplyComponent {
   selectTime$: ReplaySubject<number> = new ReplaySubject(1);
 
   resData$: Observable<GraphData> = combineLatest([
-    this.SupplyPlanResponse$,
+    this.supplyPlanResponse$,
     this.selectGood$,
     this.selectTime$,
     this.nodes$,
@@ -205,7 +234,7 @@ export class ResourceSupplyComponent {
         return (
           edge.goodsName === good &&
           edge.startTime <= time &&
-          edge.endTime >= time
+          edge.endTime > time
         );
       });
 
@@ -223,6 +252,9 @@ export class ResourceSupplyComponent {
           target: 'node' + edge.endId.toString(),
           label: edge.goodsAmount.toString(),
           type: 'arrow-running',
+          style: {
+            stroke: '#d4380d',
+          },
         });
       }
 

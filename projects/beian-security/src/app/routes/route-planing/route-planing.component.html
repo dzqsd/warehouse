@@ -130,8 +130,10 @@
   <app-fa-graph [data$]="data$"></app-fa-graph>
 </nz-card>
 
-<nz-card
-  ><nz-table nzTemplateMode>
+<nz-card>
+  <h3>总费用：{{ totalCost$ | async }}</h3>
+
+  <nz-table nzTemplateMode>
     <thead>
       <tr>
         <th>所需物资类型</th>
@@ -167,6 +169,10 @@
       }
     </nz-select>
   </nz-form-item>
+
+  <!--  <h3>{{ selectGood$ | async }}运输总数：{{ curFlowSum$ | async }}</h3>-->
+
+  <h3>{{ selectGood$ | async }}费用：{{ curCostSum$ | async }}</h3>
 </nz-card>
 
 <nz-card>
