@@ -9,7 +9,6 @@ import { WarehouseManageComponent } from './warehouse-manage/warehouse-manage.co
 import { RoutePlaningComponent } from './route-planing/route-planing.component';
 import { ResourceSupplyComponent } from './resource-supply/resource-supply.component';
 import { UrgentPlanComponent } from './urgent-plan/urgent-plan.component';
-import { authGuardGuard } from '../guards/auth-guard.guard';
 
 export default [
   {
@@ -35,7 +34,7 @@ export default [
     data: {
       nav: 'default',
     },
-    canActivate: [authGuardGuard],
+    // canActivate: [authGuardGuard],
     children: [
       {
         path: 'warehouse-manage',

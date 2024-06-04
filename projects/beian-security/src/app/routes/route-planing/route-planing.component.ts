@@ -12,6 +12,7 @@ import {
   ReplaySubject,
   shareReplay,
   switchMap,
+  zip,
 } from 'rxjs';
 import { EdgeConfig, GraphData } from '@antv/g6';
 import { NzSelectModule } from 'ng-zorro-antd/select';
@@ -29,6 +30,7 @@ import {
 import { NzGridModule } from 'ng-zorro-antd/grid';
 import { NzFormModule } from 'ng-zorro-antd/form';
 import { NzTableModule } from 'ng-zorro-antd/table';
+import { Graph2Component } from '../graph2/graph2.component';
 // interface SupplyDemandItem {
 //   goodsName: string;
 //   id_list: number[];
@@ -58,6 +60,7 @@ interface Place {
     NzGridModule,
     NzFormModule,
     NzTableModule,
+    Graph2Component,
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })
@@ -138,6 +141,69 @@ export class RoutePlaningComponent implements OnInit {
       { source: 'node10', target: 'node15', label: '' }, // 北京、山东
     ],
   };
+
+  SupplyPlanResponse$ = this.routePlaningApiService
+    .getSupply1()
+    .pipe(shareReplay(1));
+
+  nodes$: Observable<{ id: number; name: string }[]> =
+    this.SupplyPlanResponse$.pipe(
+      map((response) => {
+        return response.graph.map((node) => {
+          return {
+            id: node.id,
+            name: node.name,
+          };
+        });
+      }),
+    );
+
+  edges$ = this.SupplyPlanResponse$.pipe(
+    map((response) => {
+      return response.graph.flatMap((node) => {
+        return node.edgeCostList.map((edge) => {
+          return {
+            source: node.id,
+            target: edge.toId,
+            capacity: edge.capacity,
+            cost: edge.fee,
+            time: edge.time,
+          };
+        });
+      });
+    }),
+  );
+
+  buildNodeData(nodes: { id: number; name: string }[]) {
+    return nodes.map((node) => {
+      return {
+        id: 'node' + node.id.toString(),
+        x: this.baseNode.find(
+          (baseNode) => baseNode.id === 'node' + node.id.toString(),
+        )!.x,
+        y: this.baseNode.find(
+          (baseNode) => baseNode.id === 'node' + node.id.toString(),
+        )!.y,
+        label: node.name,
+      };
+    });
+  }
+
+  costData$: Observable<GraphData> = zip([this.nodes$, this.edges$]).pipe(
+    map(([nodes, edges]) => {
+      return {
+        nodes: this.buildNodeData(nodes),
+        edges: edges.map((edge) => {
+          return {
+            source: 'node' + edge.source.toString(),
+            target: 'node' + edge.target.toString(),
+            label: edge.cost.toString(),
+            // cost: edge.cost.toString(),
+          };
+        }),
+      };
+    }),
+  );
 
   data$: BehaviorSubject<GraphData> = new BehaviorSubject<GraphData>(
     this.baseGraph,
